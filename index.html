@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan d'entraînement après le 10K</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Plan 10K">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#f4f6f8; --card:#ffffff; --text:#18222d; --muted:#667280; --line:#dde2e7; --accent:#1f3a5f;
+  --easy:#e0f0e2; --club:#d9e8f8; --long:#e7ddf4; --tempo:#fde3c8; --test:#f7d5d1;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#12171c; --card:#1b222a; --text:#e7ebef; --muted:#97a2ae; --line:#2b343d; --accent:#9dbfee;
+    --easy:#1e3324; --club:#1d2f46; --long:#2d2540; --tempo:#463320; --test:#4a2522;
+  }
+}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.7rem;line-height:1.2;margin:0 0 4px;color:var(--accent)}
+.sub{margin:0 0 16px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px}
+.bar button{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;cursor:pointer}
+.bar button:focus-visible,.tag:focus-visible,.txt:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{color:var(--muted);font-size:.85rem;margin:0 0 20px}
+.week{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px}
+.week.now{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.week h2{font-size:1rem;margin:0 0 10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.week h2 span{color:var(--muted);font-weight:400}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cell{border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:110px}
+.cell.easy{background:var(--easy)} .cell.club{background:var(--club)} .cell.long{background:var(--long)}
+.cell.tempo{background:var(--tempo)} .cell.test{background:var(--test)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+.top label{display:flex;align-items:center;gap:4px;cursor:pointer}
+.tag{font:inherit;font-size:.75rem;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:1px 8px;cursor:pointer}
+.txt{flex:1;font-size:.92rem;border-radius:4px;padding:2px}
+.cell.done .txt{text-decoration:line-through;opacity:.55}
+@media (max-width:760px){.days{grid-template-columns:1fr}.cell{min-height:0}}
+@media print{.bar,.hint{display:none}body{background:#fff;color:#000}.week{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Plan d'entraînement après le 10K</h1>
+  <p class="sub">Du 9 novembre 2026 au 3 janvier 2027. Objectif : être de plus en plus à l'aise à 5'/km.</p>
+  <div class="bar">
+    <button id="print">Imprimer ou enregistrer en PDF</button>
+    <button id="reset">Rétablir le plan d'origine</button>
+  </div>
+  <p class="hint">Clique sur un texte pour le modifier, sur l'étiquette pour changer le type de séance, et coche les séances faites. Tout est enregistré dans ton navigateur. Pour changer le plan pour tout le monde, modifie la liste PLAN en bas de ce fichier.</p>
+  <div id="plan"></div>
+</main>
+
+<script>
+// ---- À MODIFIER : date du premier lundi et séances ----
+const START = "2026-11-09";
+const CLUB = "Séance du club (suivre la séance prévue)";
+// Types : easy (facile), club, long (longue), tempo, test
+const PLAN = [
+  {name:"Récup", days:[["easy","Repos ou 30' très facile"],["club","Club (en endurance si jambes lourdes)"],["easy","40' facile"],["easy","60' facile"]]},
+  {name:"Build", days:[["easy","45' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 2x10' à 5'00/km (récup 3'), 10' retour au calme"]]},
+  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile"],["long","80' facile, derniers 10' à 5'20/km"]]},
+  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 3x10' à 4'58/km (récup 2'), 10' retour au calme"]]},
+  {name:"Allégée", days:[["easy","40' facile"],["club",CLUB],["easy","40' facile"],["long","60' facile"]]},
+  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 2x15' à 4'58/km (récup 2'30), 10' retour au calme"]]},
+  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile"],["long","90' facile, derniers 20' progressifs de 5'20 à 5'10/km"]]},
+  {name:"Test", days:[["easy","45' facile"],["club",CLUB],["easy","40' facile + 4x20\" lignes droites"],["test","15' échauffement, 30' continu à 4'52/km, 10' retour au calme"]]}
+];
+// ---- Fin de la zone à modifier ----
+
+const DAYS = [["Lundi",0],["Mercredi",2],["Vendredi",4],["Samedi",5]];
+const LABELS = {easy:"Facile", club:"Club", long:"Longue", tempo:"Tempo", test:"Test"};
+const TYPES = Object.keys(LABELS);
+const KEY = "plan10k-v1";
+
+let store = {text:{}, done:{}, type:{}};
+try { store = Object.assign(store, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} }
+
+const fmt = new Intl.DateTimeFormat("fr-FR", {day:"numeric", month:"short"});
+const first = new Date(START + "T00:00:00");
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const today = new Date(); today.setHours(0,0,0,0);
+
+function render(){
+  const root = document.getElementById("plan");
+  root.innerHTML = "";
+  PLAN.forEach((w,i) => {
+    const mon = addDays(first, i*7), sun = addDays(mon, 6);
+    const sec = document.createElement("section");
+    sec.className = "week" + (today >= mon && today <= sun ? " now" : "");
+    sec.innerHTML = `<h2>Semaine ${i+1} : ${w.name}<span>${fmt.format(mon)} au ${fmt.format(sun)}</span></h2>`;
+    const grid = document.createElement("div"); grid.className = "days";
+    w.days.forEach((d,j) => {
+      const id = i + "-" + j;
+      const type = store.type[id] || d[0];
+      const cell = document.createElement("div");
+      cell.className = "cell " + type + (store.done[id] ? " done" : "");
+
+      const top = document.createElement("div"); top.className = "top";
+      const date = document.createElement("span");
+      date.textContent = DAYS[j][0] + " " + fmt.format(addDays(mon, DAYS[j][1]));
+      const tag = document.createElement("button"); tag.className = "tag"; tag.type = "button";
+      tag.textContent = LABELS[type]; tag.title = "Changer le type de séance";
+      tag.onclick = () => {
+        const cur = store.type[id] || d[0];
+        store.type[id] = TYPES[(TYPES.indexOf(cur)+1) % TYPES.length];
+        save(); render();
+      };
+      top.append(date, tag);
+
+      const txt = document.createElement("div"); txt.className = "txt";
+      txt.contentEditable = "true"; txt.spellcheck = false;
+      txt.textContent = store.text[id] ?? d[1];
+      txt.oninput = () => { store.text[id] = txt.textContent; save(); };
+
+      const lab = document.createElement("label");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!store.done[id];
+      cb.onchange = () => { store.done[id] = cb.checked; cell.classList.toggle("done", cb.checked); save(); };
+      lab.append(cb, document.createTextNode("Faite"));
+
+      cell.append(top, txt, lab);
+      grid.append(cell);
+    });
+    sec.append(grid);
+    root.append(sec);
+  });
+}
+
+document.getElementById("print").onclick = () => window.print();
+document.getElementById("reset").onclick = () => {
+  if (confirm("Effacer toutes tes modifications et cases cochées ?")) {
+    store = {text:{}, done:{}, type:{}}; save(); render();
+  }
