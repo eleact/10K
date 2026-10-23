@@ -1,13 +1,13 @@
 {
-  "name": "Plan d'entraînement 10K",
-  "short_name": "Plan 10K",
-  "description": "Calendrier d'entraînement après le 10K du 8 novembre",
+  "name": "10K training plan",
+  "short_name": "10K",
+  "description": "10K training",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#1f3a5f",
-  "lang": "fr",
+  "lang": "en",
   "icons": [
     {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
     {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
