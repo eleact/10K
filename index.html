@@ -23,8 +23,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
 main{padding:0 12px 40px}
 nav{position:sticky;top:10px;z-index:10;max-width:1100px;margin:10px auto 0;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-radius:999px;box-shadow:0 12px 30px -18px rgba(26,35,51,.5)}
 nav b{font-weight:600;letter-spacing:-.03em;font-size:1.05rem}
-nav .sp{margin-left:auto;display:flex;gap:18px}
+nav .sp{margin-left:auto;display:flex;align-items:center;gap:18px}
 nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
+nav button{font:inherit;font-size:.85rem;color:#fff;background:var(--navy);border:0;border-radius:999px;padding:5px 14px;cursor:pointer}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .navy a:focus-visible,.navy button:focus-visible{outline-color:#fff}
 .slide{position:relative;max-width:1100px;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
@@ -42,6 +43,7 @@ h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize
 .hero h1 span{display:block;animation:streak .9s cubic-bezier(.2,.7,.2,1) both}
 .hero h1 span:nth-child(2){margin-left:7%;animation-delay:.12s}
 @keyframes streak{from{opacity:0;transform:translateX(-80px) skewX(-10deg)}}
+.count{margin:0 0 6px;font-size:clamp(1rem,2.4vw,1.35rem);letter-spacing:-.02em;color:#b9c6d4}
 .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
 .cols div{border-left:1px solid var(--rule);padding:4px 22px}
 .cols div:first-child{border-left:0;padding-left:0}
@@ -50,6 +52,7 @@ h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize
 .cols strong{display:block;font-weight:500;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.04em;margin-top:6px}
 .legend{margin:22px auto 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .legend span{font-size:.78rem;padding:2px 11px;border-radius:999px}
+#pastBtn{margin-left:auto;font-size:.8rem;padding:5px 14px}
 
 /* Calendar */
 .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -73,6 +76,10 @@ h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize
 .t-easy{background:var(--pale)}.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.t-long{background:var(--rule)}
 .t-tempo{background:#bcd0f7}.t-test{background:var(--navy);color:#fff}.t-race{background:var(--cobalt);color:#fff}
 
+/* Weekly total row */
+.wk{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 20px;align-items:baseline;font-size:.82rem;color:var(--slate);padding:4px 4px 12px;border-bottom:1px solid var(--mist)}
+.wk .wl{font-weight:500;color:var(--ink)}
+
 /* Empty day: the whole box is clickable */
 .day.blank{position:relative;cursor:pointer;transition:background .15s}
 .day.blank:hover{background:var(--pale)}
@@ -89,12 +96,16 @@ dialog{border:0;border-radius:20px;padding:22px;width:min(520px,94vw);max-height
 dialog::backdrop{background:rgba(11,16,25,.55)}
 dialog h3{margin:0 0 14px;font-size:1.3rem;font-weight:500;letter-spacing:-.03em;text-transform:capitalize}
 dialog label{display:block;font-size:.8rem;color:var(--slate);margin-bottom:10px}
-dialog input[type=text],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--pale);color:var(--ink)}
+dialog input[type=text],dialog input[type=date],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--pale);color:var(--ink)}
 dialog textarea{resize:vertical;line-height:1.45}
 dialog .chk{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:.95rem}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .part{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+.sec{font-size:.85rem;font-weight:500;margin:8px 0 6px}
 .hint{font-size:.76rem;color:var(--slate);margin:-2px 0 12px}
+.copy{display:flex;align-items:flex-end;gap:10px;margin:4px 0 6px}
+.copy label{flex:1;margin:0}
 .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:8px}
 dialog .btn{color:var(--ink)}
 dialog .danger{color:#b3261e}
@@ -115,6 +126,8 @@ dialog .danger{color:#b3261e}
 @media (max-width:640px){
   main{padding:0 8px 32px}
   .slide{padding:22px 12px;border-radius:18px}
+  nav{padding:8px 14px;gap:10px}
+  nav .sp{gap:12px}
   .cols{grid-template-columns:1fr}
   .cols div{border-left:0;border-top:1px solid var(--rule);padding:14px 0}
   .cols div:first-child{border-top:0}
@@ -126,11 +139,12 @@ dialog .danger{color:#b3261e}
 <main>
   <nav>
     <b>10K training</b>
-    <div class="sp"><a href="#allures">Paces</a><a href="#calendrier">Calendar</a></div>
+    <div class="sp"><a href="#allures">Paces</a><a href="#calendrier">Calendar</a><button type="button" id="goToday">Today</button></div>
   </nav>
 
   <section class="slide navy hero">
     <h1><span>10K</span><span>training</span></h1>
+    <p class="count" id="count"></p>
   </section>
 
   <section class="slide pale rise" id="allures">
@@ -142,7 +156,7 @@ dialog .danger{color:#b3261e}
     </div>
   </section>
 
-  <div class="legend" id="calendrier"></div>
+  <div class="legend" id="calendrier"><button type="button" class="btn" id="pastBtn" hidden></button></div>
   <div id="cal"></div>
 
   <section class="slide navy rise">
@@ -155,7 +169,7 @@ dialog .danger{color:#b3261e}
   <h3 id="dTitle"></h3>
   <div class="two">
     <label>Type<select id="dT" data-f="t"></select></label>
-    <label>Distance (km)<input type="text" id="dK" data-f="km" inputmode="decimal" placeholder="auto"></label>
+    <label>Planned distance (km)<input type="text" id="dK" data-f="km" inputmode="decimal" placeholder="auto"></label>
   </div>
   <label>Warm-up<input type="text" data-f="wx" placeholder="e.g. 15' easy"></label>
   <div class="part">
@@ -164,8 +178,23 @@ dialog .danger{color:#b3261e}
   </div>
   <p class="hint">The pace is only shown for easy runs. For other types, write it in the practice text.</p>
   <label>Cool-down<input type="text" data-f="cx" placeholder="e.g. 10' easy"></label>
-  <label>Notes<textarea data-f="n" rows="4"></textarea></label>
+  <label>Notes<textarea data-f="n" rows="3"></textarea></label>
+
+  <p class="sec">What you did</p>
+  <div class="three">
+    <label>Actual km<input type="text" data-l="km" inputmode="decimal" placeholder="e.g. 8.2"></label>
+    <label>Avg heart rate<input type="text" data-l="hr" inputmode="numeric" placeholder="bpm"></label>
+    <label>Feel<select data-l="feel"><option value="">-</option><option>Great</option><option>Good</option><option>OK</option><option>Heavy</option></select></label>
+  </div>
   <label class="chk"><input type="checkbox" id="dDone"> Done</label>
+
+  <p class="sec">Copy to another day</p>
+  <div class="copy">
+    <label>Date<input type="date" id="dCopyDate"></label>
+    <button class="btn" id="dCopy" type="button">Copy</button>
+  </div>
+  <p class="hint" id="dCopyMsg"></p>
+
   <div class="row">
     <button class="btn danger" id="dRemove">Remove practice</button>
     <button class="btn" id="dReset">Reset this day</button>
@@ -177,13 +206,14 @@ dialog .danger{color:#b3261e}
 // ---------- PLAN: edit here ----------
 const START = "2026-11-09"; // first Monday of the plan
 const EZ = "6'15-6'45/km";  // easy pace
+const HR_EASY = 155;        // max heart rate on easy runs
 
 // Practice model: t = type, km = fixed distance (empty = estimated),
 // wx = warm-up, mx/mp = practice text/pace (pace shown for easy runs only), cx = cool-down, n = notes.
 // Tip for the distance estimate: write reps like "3×10' at 5'00/km · rec 3' jog" or "3×3K at 5'00/km · rec 2' jog".
 const S = (t, o) => Object.assign({t, km:"", wx:"", mx:"", mp:"", cx:"", n:""}, o);
 const easy = (m, st) => S("easy", {
-  mx: m+"' easy"+(st?'\n+ 4×20" strides, 40" walk between':''), mp: EZ, n: "Max heart rate 155"});
+  mx: m+"' easy"+(st?'\n+ 4×20" strides, 40" walk between':''), mp: EZ, n: "Max heart rate "+HR_EASY});
 const tempo = (n,m,p,r) => S("tempo", {
   wx:"15' easy",
   mx:n+"×"+m+"' at "+p+"/km · rec "+r+" jog",
@@ -199,6 +229,15 @@ const RACE_DATE = "2026-11-08";
 // Final race preparation
 const VIEW_START = "2026-10-23"; // first day shown in the calendar
 const PRE = {
+  // This week
+  "2026-10-23": easy(40,1),
+  "2026-10-24": S("long", {
+    mx:"65' easy\n+ 10' at 5'20/km",
+    n:"Last long run before the race. Keep it comfortable, finish feeling you could do more.\nSunday: rest."}),
+  // Next week (Saturday 31 is the key workout)
+  "2026-10-26": easy(45),
+  "2026-10-28": CLUB(),
+  "2026-10-30": easy(40,1),
   "2026-10-31": S("tempo", {
     wx:"15' easy",
     mx:"3×3K at 5'00/km · rec 2' jog",
@@ -231,14 +270,19 @@ const WEEKS = [
 // ---------- end of editable zone ----------
 
 const LABELS = {easy:"Easy", club:"Club", long:"Long", tempo:"Tempo", test:"Test", race:"Race"};
+const MONTHS = [[2026,9],[2026,10],[2026,11],[2027,0]];
 const KEY = "10k-training-v3";
+const DAY = 864e5;
 const pad = n => String(n).padStart(2,"0");
 const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const mondayOf = d => addDays(d, -((d.getDay()+6)%7));
 const first = new Date(START+"T00:00:00");
 const END = addDays(first, WEEKS.length*7-1);
 const VIEW = new Date(VIEW_START+"T00:00:00");
 const todayISO = iso(new Date());
+const today0 = new Date(todayISO+"T00:00:00");
+const weekStart = mondayOf(today0);
 const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 const SESS = {};
@@ -246,8 +290,8 @@ SESS[RACE_DATE] = RACE;
 Object.assign(SESS, PRE);
 WEEKS.forEach((w,i) => [0,2,4,5].forEach((off,j) => { SESS[iso(addDays(first, i*7+off))] = w[j]; }));
 
-// store.o = edited or added practices, store.rm = removed days, store.done = checkmarks
-let store = {o:{}, rm:{}, done:{}};
+// store.o = edited or added practices, store.rm = removed days, store.done = checkmarks, store.log = what you actually did
+let store = {o:{}, rm:{}, done:{}, log:{}};
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) store = Object.assign(store, JSON.parse(raw));
@@ -299,6 +343,7 @@ function kmInfo(g){
   return {v:Math.round(estParts(g)*2)/2, auto:true};
 }
 const fmtKm = i => i.v > 0 ? (i.auto?"≈ ":"")+(Number.isInteger(i.v)?i.v:i.v.toFixed(1))+" km" : "";
+const km1 = v => String(Math.round(v*10)/10);
 
 // ---------- rendering ----------
 const fmtPace = p => !p ? "" : (p.includes("/") ? p : p+"/km");
@@ -307,39 +352,81 @@ const block = (label, x, p) => (!x && !p) ? "" :
   (x ? '<span class="tx">'+esc(x).replace(/\n/g,"<br>")+'</span>' : '')+
   (p ? '<span class="pc">'+esc(fmtPace(p))+'</span>' : '')+'</span>';
 
-function chipHTML(g){
+function logText(g, k){
+  const L = store.log[k] || {}, bits = [];
+  if (String(L.km||"").trim()) bits.push(String(L.km).trim()+" km");
+  if (String(L.hr||"").trim()){
+    const hr = num(L.hr);
+    bits.push(String(L.hr).trim()+" bpm"+(g.t === "easy" && hr > HR_EASY ? " (above "+HR_EASY+")" : ""));
+  }
+  if (L.feel) bits.push(L.feel);
+  return bits.join(" · ");
+}
+
+function chipHTML(g, k){
   const km = fmtKm(kmInfo(g));
   return '<span class="top"><b class="km">'+(km || "&nbsp;")+'</b><span class="ty">'+esc(LABELS[g.t]||"")+'</span></span>'+
     block("Warm-up", g.wx, "")+
     block("", g.mx, g.t === "easy" ? g.mp : "")+
-    block("Cool-down", g.cx, "");
+    block("Cool-down", g.cx, "")+
+    block("Logged", logText(g, k), "");
 }
 
 const monthFmt = new Intl.DateTimeFormat("en-GB", {month:"long", year:"numeric"});
 const longFmt = new Intl.DateTimeFormat("en-GB", {weekday:"long", day:"numeric", month:"long"});
+const shortFmt = new Intl.DateTimeFormat("en-GB", {day:"numeric", month:"short"});
 const WD = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const pastBtn = document.getElementById("pastBtn");
+let showPast = false;
+
+// Weekly total row, shown once per week (after the row that holds its first visible day)
+function weekRow(d, viewFrom, fd){
+  const mon = mondayOf(d), wf = mon < viewFrom ? viewFrom : mon;
+  if (wf < fd) return null;
+  const sun = addDays(mon, 6), last = sun < END ? sun : END;
+  let planned = 0, logged = 0;
+  for (let x = new Date(wf); x <= last; x = addDays(x,1)){
+    const k = iso(x), g = getS(k);
+    if (g) planned += kmInfo(g).v;
+    const L = store.log[k];
+    if (L){ const v = num(L.km); if (v > 0) logged += v; }
+  }
+  if (!planned && !logged) return null;
+  const el = document.createElement("div"); el.className = "wk";
+  el.innerHTML = '<span class="wl">'+shortFmt.format(wf)+' – '+shortFmt.format(last)+'</span>'+
+    (planned ? '<span>Planned ≈ '+km1(planned)+' km</span>' : '')+
+    (logged ? '<span>Logged '+km1(logged)+' km</span>' : '');
+  return el;
+}
 
 function render(){
+  const viewFrom = showPast ? VIEW : (weekStart > VIEW ? weekStart : VIEW);
+  const pastN = weekStart > VIEW ? Math.ceil(Math.round((weekStart - VIEW)/DAY)/7) : 0;
+  pastBtn.hidden = !pastN;
+  pastBtn.textContent = showPast ? "Hide past weeks" : "Show past weeks ("+pastN+")";
+
   const cal = document.getElementById("cal");
   cal.innerHTML = "";
-  [[2026,9],[2026,10],[2026,11],[2027,0]].forEach(([y,m]) => {
-    const fd = new Date(y,m,1) < VIEW ? VIEW : new Date(y,m,1);
-    const ld = new Date(y,m+1,0) < END ? new Date(y,m+1,0) : END;
+  MONTHS.forEach(([y,m]) => {
+    const ms = new Date(y,m,1), me = new Date(y,m+1,0);
+    const fd = ms < viewFrom ? viewFrom : ms;
+    const ld = me < END ? me : END;
+    if (fd > ld) return;
     const box = document.createElement("section"); box.className = "slide white";
     box.innerHTML = "<h2>"+monthFmt.format(fd)+"</h2>";
     const grid = document.createElement("div"); grid.className = "grid";
     WD.forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
     const lead = (fd.getDay()+6)%7;
     for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
-    let count = lead;
     for (let d=new Date(fd); d<=ld; d=addDays(d,1)){
       const k = iso(d), g = getS(k), cell = document.createElement("div");
+      cell.id = "d-"+k;
       cell.className = "day"+(g?"":" blank")+(k===todayISO?" today":"");
       cell.innerHTML = '<span class="num"><span class="dn">'+WD[(d.getDay()+6)%7]+' </span>'+d.getDate()+'</span>';
       if (g){
         const b = document.createElement("button");
         b.className = "chip t-"+g.t+(store.done[k]?" done":""); b.type = "button";
-        b.innerHTML = chipHTML(g);
+        b.innerHTML = chipHTML(g, k);
         b.onclick = () => openDay(k);
         cell.append(b);
       } else {
@@ -355,9 +442,12 @@ function render(){
           cell.append(r);
         }
       }
-      grid.append(cell); count++;
+      grid.append(cell);
+      if (d.getDay() === 0 || +d === +ld){
+        const row = weekRow(d, viewFrom, fd);
+        if (row) grid.append(row);
+      }
     }
-    while (count % 7){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); count++; }
     box.append(grid); cal.append(box);
   });
 }
@@ -365,9 +455,12 @@ function render(){
 // ---------- dialog ----------
 const dlg = document.getElementById("dlg");
 const dT = document.getElementById("dT"), dK = document.getElementById("dK"), dDone = document.getElementById("dDone");
+const dCopyDate = document.getElementById("dCopyDate"), dCopyMsg = document.getElementById("dCopyMsg");
 const fields = dlg.querySelectorAll("[data-f]");
+const logFields = dlg.querySelectorAll("[data-l]");
 let cur = null;
 Object.keys(LABELS).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = LABELS[k]; dT.append(o); });
+dCopyDate.min = VIEW_START; dCopyDate.max = iso(END);
 
 function hint(){
   const g = getS(cur); if (!g) return;
@@ -377,12 +470,15 @@ function hint(){
 function fill(){
   const g = getS(cur); if (!g) return;
   fields.forEach(el => { el.value = g[el.dataset.f] ?? ""; });
+  const L = store.log[cur] || {};
+  logFields.forEach(el => { el.value = L[el.dataset.l] ?? ""; });
   dDone.checked = !!store.done[cur];
   hint();
 }
 function openDay(k){
   cur = k;
   document.getElementById("dTitle").textContent = longFmt.format(new Date(k+"T00:00:00"));
+  dCopyDate.value = ""; dCopyMsg.textContent = "";
   fill(); dlg.showModal();
 }
 function addPractice(k){
@@ -395,28 +491,61 @@ fields.forEach(el => el.addEventListener("input", () => {
   store.o[cur] = Object.assign({}, g, {[el.dataset.f]: el.value});
   save(); hint(); render();
 }));
+logFields.forEach(el => el.addEventListener("input", () => {
+  store.log[cur] = Object.assign({}, store.log[cur], {[el.dataset.l]: el.value});
+  save(); render();
+}));
 dDone.onchange = () => { store.done[cur] = dDone.checked; save(); render(); };
+document.getElementById("dCopy").onclick = () => {
+  const t = dCopyDate.value;
+  if (!t){ dCopyMsg.textContent = "Pick a date first."; return; }
+  if (t === cur){ dCopyMsg.textContent = "Pick a different day."; return; }
+  const td = new Date(t+"T00:00:00");
+  if (td < VIEW || td > END){ dCopyMsg.textContent = "Pick a day between "+shortFmt.format(VIEW)+" and "+shortFmt.format(END)+"."; return; }
+  if (getS(t) && !confirm("Replace the practice on "+longFmt.format(td)+"?")) return;
+  const g = getS(cur);
+  delete store.rm[t]; delete store.done[t]; delete store.log[t];
+  store.o[t] = Object.assign({}, g);
+  save(); render();
+  dCopyMsg.textContent = "Copied to "+longFmt.format(td)+".";
+};
 document.getElementById("dClose").onclick = () => dlg.close();
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 document.getElementById("dRemove").onclick = () => {
   if (!confirm("Remove this practice?")) return;
-  delete store.o[cur]; delete store.done[cur]; store.rm[cur] = true;
+  delete store.o[cur]; delete store.done[cur]; delete store.log[cur]; store.rm[cur] = true;
   save(); dlg.close(); render();
 };
 document.getElementById("dReset").onclick = () => {
-  delete store.o[cur]; delete store.rm[cur]; delete store.done[cur];
+  delete store.o[cur]; delete store.rm[cur]; delete store.done[cur]; delete store.log[cur];
   save();
   if (SESS[cur]) fill(); else dlg.close();
   render();
 };
 document.getElementById("resetAll").onclick = () => {
-  if (confirm("Erase all your changes, added practices and checkmarks?")) {
-    store = {o:{}, rm:{}, done:{}}; save(); render();
+  if (confirm("Erase all your changes, added practices, logs and checkmarks?")) {
+    store = {o:{}, rm:{}, done:{}, log:{}}; save(); render();
   }
 };
 
+// ---------- header helpers ----------
+pastBtn.onclick = () => { showPast = !showPast; render(); };
+document.getElementById("goToday").onclick = () => {
+  const el = document.getElementById("d-"+todayISO) || document.getElementById("calendrier");
+  el.scrollIntoView({behavior:"smooth", block:"center"});
+};
+(function countdown(){
+  const race = new Date(RACE_DATE+"T00:00:00");
+  const n = Math.round((race - today0)/DAY);
+  const el = document.getElementById("count");
+  el.textContent = n > 1 ? n+" days to the 10K · "+longFmt.format(race)
+    : n === 1 ? "Tomorrow: the 10K"
+    : n === 0 ? "Race day. Good luck!"
+    : "10K done on "+longFmt.format(race);
+})();
+
 const lg = document.getElementById("calendrier");
-Object.keys(LABELS).forEach(k => { const s = document.createElement("span"); s.className = "t-"+k; s.textContent = LABELS[k]; lg.append(s); });
+Object.keys(LABELS).forEach(k => { const s = document.createElement("span"); s.className = "t-"+k; s.textContent = LABELS[k]; lg.insertBefore(s, pastBtn); });
 
 document.documentElement.classList.add("js");
 const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
