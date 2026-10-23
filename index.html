@@ -526,25 +526,27 @@ function renderCalendar(evMap){
   cal.innerHTML = "";
   MONTHS.forEach(([y,m]) => {
     const ms = new Date(y,m,1), me = new Date(y,m+1,0);
-    const fd = ms < viewFrom ? viewFrom : ms;
-    const ld = me < END ? me : END;
-    if (fd > ld) return;
+    // A week that sits across two months goes in the month holding most of its days
+    // (the month of its Thursday), so 30 Nov - 6 Dec is shown in December.
+    const weeks = [];
+    for (let mon = mondayOf(ms); mon <= me; mon = addDays(mon,7)){
+      const thu = addDays(mon,3);
+      if (thu.getMonth() !== m || thu.getFullYear() !== y) continue;
+      const wf = mon < viewFrom ? viewFrom : mon;
+      const sun = addDays(mon,6), last = sun < END ? sun : END;
+      if (wf <= last) weeks.push({mon, wf, last});
+    }
+    if (!weeks.length) return;
     const box = document.createElement("section"); box.className = "slide white";
-    box.innerHTML = "<h2>"+monthFmt.format(fd)+"</h2>";
+    box.innerHTML = "<h2>"+monthFmt.format(ms)+"</h2>";
     const grid = document.createElement("div"); grid.className = "grid";
     WD.forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
-    const lead = (fd.getDay()+6)%7;
-    for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
-    for (let d=new Date(fd); d<=ld; d=addDays(d,1)){
-      grid.append(dayCell(d, evMap));
-      if (d.getDay() === 0 || +d === +ld){
-        const mon = mondayOf(d), wf = mon < viewFrom ? viewFrom : mon;
-        if (wf >= fd){
-          const sun = addDays(mon,6);
-          grid.append(weekSummary(mon, wf, sun < END ? sun : END));
-        }
-      }
-    }
+    weeks.forEach(({mon, wf, last}) => {
+      const lead = (wf.getDay()+6)%7;
+      for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
+      for (let d=new Date(wf); d<=last; d=addDays(d,1)) grid.append(dayCell(d, evMap));
+      grid.append(weekSummary(mon, wf, last));
+    });
     box.append(grid); cal.append(box);
   });
 }
