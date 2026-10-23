@@ -20,7 +20,24 @@ body{margin:0;background:var(--mist);color:var(--ink);font:400 16px/1.45 Geist,s
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
  repeating-radial-gradient(circle at 88% 12%,transparent 0 150px,rgba(157,177,196,.55) 150px 151px),
  repeating-radial-gradient(circle at 6% 92%,transparent 0 190px,rgba(157,177,196,.45) 190px 191px)}
-main{padding:0 12px 40px}
+main{padding:0 clamp(14px,2.5vw,40px) 40px 260px;max-width:none;width:100%;min-height:100vh}
+.app-sidebar{position:fixed;z-index:30;left:0;top:0;bottom:0;width:232px;padding:26px 16px;background:var(--navy);color:#fff;display:flex;flex-direction:column;gap:8px;box-shadow:8px 0 30px -24px rgba(0,0,0,.45)}
+.app-sidebar .brand{font-size:1.15rem;font-weight:600;letter-spacing:-.04em;margin:0 8px 26px}
+.app-sidebar button{font:inherit;text-align:left;color:#dbe4ec;background:transparent;border:0;border-radius:10px;padding:12px 14px;cursor:pointer}
+.app-sidebar button:hover,.app-sidebar button.active{background:#34445d;color:#fff}
+.app-sidebar .side-note{margin-top:auto;color:#b9c6d4;font-size:.75rem;padding:8px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px auto;max-width:1600px}
+.metric{background:#fff;border:1px solid var(--mist);border-radius:16px;padding:18px}
+.metric span{display:block;color:var(--slate);font-size:.82rem}.metric strong{display:block;font-size:1.8rem;letter-spacing:-.04em;margin-top:6px;font-weight:500}
+.dashboard-week-plan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;align-items:stretch}.week-plan-day{min-width:0;border:1px solid var(--mist);border-radius:9px;padding:9px 10px;background:#f8fafc;cursor:pointer;text-align:left;color:var(--ink);font:inherit;font-size:.82rem;line-height:1.3;display:flex;flex-direction:column;gap:5px;min-height:90px;transition:border-color .15s}.week-plan-day:hover{border-color:var(--rule)}.week-plan-day .wday{display:flex;justify-content:space-between;align-items:center;gap:5px;font-weight:600;margin-bottom:1px;font-size:.82rem}.week-plan-day .wdetail{color:var(--slate);font-size:.76rem;white-space:normal;overflow-wrap:anywhere}.week-plan-day .wstatus{color:#16834a;font-weight:700;font-size:.95rem;flex-shrink:0}.week-plan-day .wstatus-label{color:#8290a0;font-weight:400;font-size:.7rem}.week-plan-day.t-easy{background:var(--pale)}.week-plan-day.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.week-plan-day.t-long{background:var(--rule)}.week-plan-day.t-tempo{background:#bcd0f7}.week-plan-day.t-test{background:var(--navy);color:#fff}.week-plan-day.t-race{background:var(--cobalt);color:#fff}.week-plan-day.t-test .wdetail,.week-plan-day.t-race .wdetail{color:#e0e7f0}.week-plan-day.is-completed .wday-label,.week-plan-day.is-completed .wdetail{color:#788797}.week-plan-day.is-completed.t-test .wday-label,.week-plan-day.is-completed.t-race .wday-label{color:#d3dbe6}.week-plan-day .wcheck{color:#16834a;font-weight:800;font-size:1.05rem}@media(max-width:900px){.dashboard-week-plan{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.dashboard-week-plan{grid-template-columns:1fr}.week-plan-day{min-height:0;padding:9px 10px}}
+.observations{background:#fff;border:1px solid var(--mist);border-radius:16px;padding:18px;margin:16px auto;max-width:none}.observations h3{margin:0 0 10px;font-weight:500}.observations ul{margin:0;padding-left:20px}.observations li{margin:7px 0}
+.stats-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.chart-card{border:1px solid var(--mist);border-radius:16px;padding:16px;min-width:0}.chart-card h3{margin:0 0 8px;font-weight:500}.chart-card canvas{display:block;width:100%;height:250px}
+.pace-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:900px}.pace-settings label{display:flex;flex-direction:column;gap:6px;color:var(--slate);font-size:.9rem}.pace-settings input{width:100%;padding:11px 12px;border:1px solid var(--rule);border-radius:10px;background:#fff;color:var(--ink);font:inherit}.pace-settings .row,.pace-settings #settingsMessage{grid-column:1/-1}@media(max-width:640px){.pace-settings{grid-template-columns:1fr}}
+.stats-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.stats-controls button{border:1px solid var(--rule);border-radius:999px;background:#fff;padding:7px 14px;font:inherit;cursor:pointer}.stats-controls button.active{background:var(--navy);color:#fff}
+.subtabs{display:flex;gap:8px;margin-bottom:18px}.subtabs button{font:inherit;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:7px 15px;cursor:pointer}.subtabs button.active{background:var(--navy);color:#fff}.goal-pace{font-weight:600;color:var(--cobalt);margin:4px 0 12px}.goal-label{display:inline-block;background:#e8edff;color:#263eb5;border-radius:999px;padding:3px 9px;font-size:.75rem;margin-top:5px}
+.chip.done{opacity:1;box-shadow:inset 0 0 0 2px #16834a}.chip.done .km::before{color:#16834a;font-weight:800}.chip.done .ty::after{content:' ✓';color:#16834a;font-size:.85rem}
+@media(max-width:900px){main{padding:76px 12px 32px}.app-sidebar{right:0;bottom:auto;width:auto;height:62px;padding:7px 8px;flex-direction:row;align-items:center;overflow-x:auto}.app-sidebar .brand{margin:0 8px;white-space:nowrap}.app-sidebar button{white-space:nowrap;padding:9px 12px}.app-sidebar .side-note{display:none}.dashboard-grid{grid-template-columns:1fr}.stats-layout{grid-template-columns:1fr}}
 nav{position:sticky;top:10px;z-index:10;max-width:1100px;margin:10px auto 0;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-radius:999px;box-shadow:0 12px 30px -18px rgba(26,35,51,.5)}
 nav b{font-weight:600;letter-spacing:-.03em;font-size:1.05rem}
 nav .sp{margin-left:auto;display:flex;align-items:center;gap:18px}
@@ -28,9 +45,9 @@ nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
 nav button{font:inherit;font-size:.85rem;color:#fff;background:var(--navy);border:0;border-radius:999px;padding:5px 14px;cursor:pointer}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .navy a:focus-visible,.navy button:focus-visible{outline-color:#fff}
-.slide{position:relative;max-width:1100px;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
-.slide.white{max-width:1320px}
-.legend{max-width:1320px}
+.slide{position:relative;max-width:none;width:100%;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
+.slide.white{max-width:none}
+.legend{max-width:1600px}
 .slide::before{content:"";position:absolute;inset:12px;pointer-events:none;opacity:.4;background:
  linear-gradient(currentColor,currentColor) 0 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 14px no-repeat,
  linear-gradient(currentColor,currentColor) 100% 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 14px no-repeat,
@@ -80,7 +97,7 @@ h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize
 /* Weekly row: dates, week type, distances */
 .wk{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:.82rem;color:var(--slate);padding:4px 4px 12px;border-bottom:1px solid var(--mist)}
 .wk .wl{font-weight:500;color:var(--ink)}
-.wk select{font:inherit;font-size:.8rem;padding:2px 10px;border:1px solid var(--rule);border-radius:999px;background:var(--pale);color:var(--ink);cursor:pointer}
+.week-phase{font:inherit;font-size:.8rem;padding:3px 11px;border:1px solid var(--rule);border-radius:999px;background:var(--pale);color:var(--ink);cursor:pointer}.week-phase:hover{background:var(--mist)}details{margin-top:14px;color:var(--slate)}details summary{cursor:pointer;font-weight:600;color:var(--ink)}pre{overflow:auto;white-space:pre-wrap;background:var(--pale);padding:12px;border-radius:10px;font-size:.78rem}
 
 /* Empty day: the whole box is clickable */
 .day.blank{position:relative;cursor:pointer;transition:background .15s}
@@ -147,7 +164,7 @@ dialog .danger{color:#b3261e}
   .add{min-height:30px}
 }
 @media (max-width:640px){
-  main{padding:0 8px 32px}
+  main{padding:76px 8px 32px}
   .slide{padding:22px 12px;border-radius:18px}
   nav{padding:8px 14px;gap:10px}
   nav .sp{gap:12px}
@@ -162,45 +179,100 @@ dialog .danger{color:#b3261e}
 </style>
 </head>
 <body>
+<aside class="app-sidebar" aria-label="Main navigation">
+  <div class="brand">10K training</div>
+  <button type="button" class="side-tab active" data-tab="dashboard">▦ Dashboard</button>
+  <button type="button" class="side-tab" data-tab="training">▤ Training plan</button>
+  <button type="button" class="side-tab" data-tab="racesPanel">◎ Races</button>
+  <button type="button" class="side-tab" data-tab="statistics">↗ Statistics</button>
+  <button type="button" class="side-tab" data-tab="settings">⚙ Settings</button>
+  <div class="side-note">Your training, at a glance.</div>
+</aside>
 <main>
   <nav>
     <b>10K training</b>
-    <div class="sp"><a href="#allures">Paces</a><a href="#calendrier">Calendar</a><a href="#races">Races</a><button type="button" id="goToday">Today</button></div>
+    <div class="sp"><button type="button" id="goToday">Today</button></div>
   </nav>
 
+  <div id="dashboard" class="tab-panel active">
   <section class="slide navy hero">
     <h1><span>10K</span><span>training</span></h1>
     <p class="count" id="count"></p>
     <p class="count sub" id="count2"></p>
   </section>
+  <div class="dashboard-grid" id="dashboardMetrics"></div>
+  <section class="slide white" id="dashboardWeek"><h2>Current week training plan</h2><p class="note" id="dashboardWeekRange"></p><div id="dashboardWeekPlan" class="dashboard-week-plan"></div></section>
+  <section class="observations" id="observations"><h3>Training observations</h3><ul id="observationList"><li>Complete and log workouts to see observations based on your data.</li></ul></section>
+  </div>
 
+  <div id="training" class="tab-panel">
   <section class="slide pale rise" id="allures">
     <h2>Paces</h2>
     <div class="cols">
-      <div><h3>Easy</h3><strong>6'15-6'45/km</strong><p>Mondays, Fridays and warm-ups. Max heart rate 155.</p></div>
-      <div><h3>Tempo</h3><strong>5'00 then 4'58/km</strong><p>Saturdays. Hard but controlled.</p></div>
-      <div><h3>Test</h3><strong>4'52/km</strong><p>Saturday, January 2. 30 minutes continuous.</p></div>
+      <div><h3>Easy</h3><strong id="paceEasyDisplay">6'30/km</strong><p>Mondays, Fridays and warm-ups. Max heart rate <span id="paceHrDisplay">155</span>.</p></div>
+      <div><h3>Tempo</h3><strong id="paceTempoDisplay">5'00/km</strong><p>Saturdays. Hard but controlled.</p></div>
+      <div><h3>Test</h3><strong id="paceTestDisplay">4'52/km</strong><p>Use this pace for controlled benchmark efforts.</p></div>
     </div>
   </section>
 
   <div class="legend" id="calendrier"></div>
   <div id="cal"></div>
 
-  <section class="slide pale" id="races">
-    <h2>Races &amp; events</h2>
-    <div class="evlist" id="evList"></div>
-    <button class="btn" id="evAdd" type="button">Add event</button>
-  </section>
-
   <details class="slide white" id="archive">
     <summary id="archiveSum">Archived previous weeks</summary>
     <div id="archiveBody"></div>
   </details>
+  </div>
 
-  <section class="slide navy rise">
-    <p class="wordmark">10K training</p>
-    <div class="foot"><span>Changes are saved in this browser.</span><button class="btn" id="resetAll" type="button">Reset all</button></div>
+  <div id="racesPanel" class="tab-panel">
+  <section class="slide pale" id="races">
+    <div class="subtabs"><button type="button" class="race-subtab active" data-race-tab="eventsView">Events</button><button type="button" class="race-subtab" data-race-tab="goalsView">Goals</button></div>
+    <div id="eventsView"><h2>Races</h2><div class="evlist" id="evList"></div><button class="btn" id="evAdd" type="button">Add event</button></div>
+    <div id="goalsView" hidden><h2>Race goals</h2><p class="note">Set a target time for each race. Its equivalent average pace is calculated automatically.</p><div id="goalList" class="evlist"></div></div>
   </section>
+  </div>
+
+  <div id="statistics" class="tab-panel">
+    <section class="slide white"><h2>Statistics</h2><p class="note">Charts use the workouts and measurements you have logged in this browser.</p>
+      <div class="stats-controls"><button type="button" class="active" data-range="weekly">Weekly</button><button type="button" data-range="monthly">Monthly</button></div>
+      <div class="stats-layout"><div class="chart-card"><h3>Mileage (km)</h3><canvas id="mileageChart"></canvas></div><div class="chart-card"><h3>Average pace (min/km)</h3><canvas id="paceChart"></canvas></div><div class="chart-card"><h3>Average heart rate (bpm)</h3><canvas id="hrChart"></canvas></div><div class="chart-card"><h3>Logged sessions</h3><p id="statsSummary" class="note">Log workouts to build your statistics.</p></div></div>
+    </section>
+  </div>
+
+  <div id="settings" class="tab-panel">
+    <section class="slide white"><h2>Settings</h2><p class="note">Set your pace targets in minutes:seconds per kilometre. Pace targets update throughout the training plan.</p>
+      <form id="paceSettingsForm" class="pace-settings">
+        <label>Easy pace (min:sec/km)<input id="settingEasy" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="6:30" required></label>
+        <label>Tempo pace (min:sec/km)<input id="settingTempo" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="5:00" required></label>
+        <label>Test pace (min:sec/km)<input id="settingTest" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="4:52" required></label>
+        <label>Easy run heart-rate ceiling (bpm)<input id="settingHr" type="number" min="80" max="220" step="1" required></label>
+        <div class="row"><button class="btn" type="submit">Save pace settings</button><button class="btn" id="resetPaces" type="button">Restore defaults</button></div>
+        <p id="settingsMessage" class="note" aria-live="polite"></p>
+      </form>
+    </section>
+    <section class="slide white"><h2>Cloud sync</h2><p class="note">To sync your plan between computer and phone, connect a free Supabase project. Use the same project and account on both devices. Your pace settings, completed workouts, logs and edits will sync.</p>
+      <form id="syncForm" class="pace-settings">
+        <label>Supabase project URL<input id="syncUrl" type="url" placeholder="https://your-project.supabase.co" required></label>
+        <label>Supabase publishable / anon key<input id="syncKey" type="password" autocomplete="off" placeholder="sb_publishable_… or anon key" required></label>
+        <label>Account email<input id="syncEmail" type="email" autocomplete="username" required></label>
+        <label>Account password<input id="syncPassword" type="password" autocomplete="current-password" minlength="8" required></label>
+        <div class="row"><button class="btn" type="submit">Sign in / sync</button><button class="btn" id="syncSignup" type="button">Create account</button><button class="btn" id="syncLogout" type="button">Disconnect</button></div>
+        <p id="syncMessage" class="note" aria-live="polite"></p>
+      </form>
+      <details><summary>One-time Supabase setup instructions</summary><p>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>, then open SQL Editor and run:</p><pre><code>create table if not exists public.app_state (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  payload jsonb not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.app_state enable row level security;
+create policy "Users manage their own training state"
+on public.app_state for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);</code></pre><p>Copy the project URL and publishable/anon key from Project Settings → API. Enter them here and use the same email/password on your computer and phone. Sign-up confirmation may need to be completed from your email before signing in.</p></details>
+    </section>
+  </div>
+
+  <section class="slide navy rise"><div class="foot"><span>Local changes are saved on this device. Use cloud sync in Settings to share data across devices.</span><button class="btn" id="resetAll" type="button">Reset all</button></div></section>
 </main>
 
 <dialog id="dlg">
@@ -214,16 +286,17 @@ dialog .danger{color:#b3261e}
     <label>Practice<textarea data-f="mx" rows="3" placeholder="e.g. 3×10' at 5'00/km · rec 3' jog"></textarea></label>
     <label>Pace<input type="text" data-f="mp" placeholder="e.g. 6'30/km"></label>
   </div>
-  <p class="hint">The pace is only shown for easy runs. For other types, write it in the practice text.</p>
+  <p class="hint">Pace is shown for easy runs. Estimated duration is calculated from planned distance and your numerical pace settings.</p>
   <label>Cool-down<input type="text" data-f="cx" placeholder="e.g. 10' easy"></label>
   <label>Notes<textarea data-f="n" rows="3"></textarea></label>
 
   <p class="sec">What you did</p>
   <div class="three">
     <label>Actual km<input type="text" data-l="km" inputmode="decimal" placeholder="e.g. 8.2"></label>
+    <label>Duration (HH:MM:SS or MM:SS)<input type="text" data-l="duration" placeholder="e.g. 00:42:30"></label>
     <label>Avg heart rate<input type="text" data-l="hr" inputmode="numeric" placeholder="bpm"></label>
-    <label>Feel<select data-l="feel"><option value="">-</option><option>Great</option><option>Good</option><option>OK</option><option>Heavy</option></select></label>
   </div>
+  <label>Feel<select data-l="feel"><option value="">-</option><option>Great</option><option>Good</option><option>OK</option><option>Heavy</option></select></label>
   <label class="chk"><input type="checkbox" id="dDone"> Completed</label>
 
   <p class="sec">Copy to another day</p>
@@ -247,7 +320,9 @@ dialog .danger{color:#b3261e}
     <label>Date<input type="date" data-e="date"></label>
     <label>Type<select data-e="type" id="evType"></select></label>
   </div>
-  <label>Details<textarea data-e="note" rows="3" placeholder="Distance, goal time, place"></textarea></label>
+  <label>Details<textarea data-e="note" rows="3" placeholder="Distance, place, extra details"></textarea></label>
+  <div class="two"><label>Goal time (HH:MM:SS or MM:SS)<input type="text" data-e="goalTime" id="evGoalTime" placeholder="e.g. 00:50:00"></label><label>Goal distance (km)<input type="text" data-e="goalKm" id="evGoalKm" inputmode="decimal" placeholder="e.g. 10"></label></div>
+  <p class="goal-pace" id="evGoalPace">Goal pace: enter a goal time and distance.</p>
   <div class="row">
     <button class="btn danger" id="evRemove" type="button">Remove event</button>
     <button class="btn" id="evDone" type="button">Done</button>
@@ -257,22 +332,22 @@ dialog .danger{color:#b3261e}
 <script>
 // ---------- PLAN: edit here ----------
 const START = "2026-11-09"; // first Monday of the plan
-const EZ = "6'15-6'45/km";  // easy pace
+const EZ = "6:30/km";  // default easy pace
 const HR_EASY = 155;        // max heart rate on easy runs
 
 // Practice model: t = type, km = fixed distance (empty = estimated),
 // wx = warm-up, mx/mp = practice text/pace (pace shown for easy runs only), cx = cool-down, n = notes.
 // Tip for the distance estimate: write reps like "3×10' at 5'00/km · rec 3' jog" or "3×3K at 5'00/km · rec 2' jog".
 const S = (t, o) => Object.assign({t, km:"", wx:"", mx:"", mp:"", cx:"", n:""}, o);
-const easy = (m, st) => S("easy", {
+const easy = (m, st) => S("easy", {km: String(m>=55?8:m>=43?7:6),
   mx: m+"' easy"+(st?'\n+ 4×20" strides, 40" walk between':''), mp: EZ, n: "Max heart rate "+HR_EASY});
 const tempo = (n,m,p,r) => S("tempo", {
   wx:"15' easy",
   mx:n+"×"+m+"' at "+p+"/km · rec "+r+" jog",
   cx:"10' easy",
   n:"Recovery jog at 7'00/km or slower."});
-const long = (x, n) => S("long", {mx:x, n:n||""});
-const CLUB = () => S("club", {});
+let longRunIndex = 0; const long = (x, n) => S("long", {km:String([13,14,15,16][Math.min(longRunIndex++,3)]), mx:x, n:n||""});
+const CLUB = () => S("club", {km:"11"});
 const RACE = S("race", {
   mx:"10K at 5'00/km",
   n:"Goal: 50' (5'00/km).\nKm 1 at 5'03-5'05, km 2 to 7 at 5'00, then give what you have left from km 8."});
@@ -280,7 +355,7 @@ const RACE_DATE = "2026-11-08";
 
 // Events shown in "Races & events" and used for the countdown. type: run, trail, triathlon or other
 const EVENTS = [
-  {id:"e-10k", name:"10K", date:RACE_DATE, type:"run", note:"Goal: 50' (5'00/km)"}
+  {id:"e-10k", name:"10K", date:RACE_DATE, type:"run", note:"", goalTime:"00:50:00", goalKm:"10"}
 ];
 
 // Final race preparation
@@ -288,26 +363,26 @@ const VIEW_START = "2026-10-23"; // first day shown in the calendar
 const PRE = {
   // This week
   "2026-10-23": easy(40,1),
-  "2026-10-24": S("long", {
+  "2026-10-24": S("long", {km:"13",
     mx:"65' easy\n+ 10' at 5'20/km",
     n:"Last long run before the race. Keep it comfortable, finish feeling you could do more.\nSunday: rest."}),
   // Next week (Saturday 31 is the key workout)
   "2026-10-26": easy(45),
-  "2026-10-28": CLUB(),
+  "2026-10-28": S("club", {km:"4"}),
   "2026-10-30": easy(40,1),
   "2026-10-31": S("tempo", {
     wx:"15' easy",
-    mx:"3×3K at 5'00/km · rec 2' jog",
+    mx:"2×3K at 5'00/km · rec 2' jog",
     cx:"10' easy",
-    n:"Aim for 4'58-5'02 without forcing.\nThat is 9K at goal pace: if the third rep stays controlled, 50' is realistic. If you are gritting your teeth by the second rep, your real pace is closer to 5'05-5'10.\nAlternatives: 6×1.5K at 4'58 with 1' jog (more race-like), or 4×2K at 5'00 with 90\" jog (easier if your legs are tired)."}),
+    n:"Controlled race-pace practice during the taper. Aim for 4'58-5'02/km without forcing; finish feeling you could complete another repetition."}),
   "2026-11-02": easy(40),
   "2026-11-04": S("tempo", {
-    wx:"15' easy",
+    wx:"12' easy",
     mx:`3×1K at 4'50/km · rec 90" jog`,
     cx:"10' easy",
     n:"Short and snappy, not a fitness builder. Stop if it feels hard.\nAlternative: the club practice, with less volume."}),
   "2026-11-06": S("easy", {
-    mx:`20-25' easy\n+ 4×20" strides, 40" walk between`, mp:EZ}),
+    mx:`20' easy\n+ 4×20" strides, 40" walk between`, mp:EZ}),
   "2026-11-07": S("easy", {mx:"15' very easy shakeout, or rest", mp:"7'00/km"})
 };
 
@@ -315,14 +390,14 @@ const PRE = {
 const WEEKS = [
   [S("easy",{mx:"30' very easy", mp:"6'45-7'15/km", n:"Or rest if your legs are heavy."}), CLUB(), easy(40), easy(60)],
   [easy(45), CLUB(), easy(45,1), tempo(2,10,"5'00","3'")],
-  [easy(50), CLUB(), easy(45), long("70' easy\n+ 10' at 5'20/km")],
-  [easy(50), CLUB(), easy(45,1), tempo(3,10,"4'58","2'")],
+  [easy(45), CLUB(), easy(40), long("65' easy\n+ 10' at 5'20/km")],
+  [easy(45), CLUB(), easy(40,1), tempo(3,8,"4'58","2'")],
   [easy(40), CLUB(), easy(40), long("60' easy","No need to push the pace.")],
-  [easy(50), CLUB(), easy(45,1), tempo(2,15,"4'58","2'30")],
-  [easy(50), CLUB(), easy(45), long("70' easy\n+ 20' from 5'20 to 5'10/km")],
-  [easy(45), CLUB(), easy(40,1), S("test",{
-    wx:"15' easy", mx:"30' at 4'52/km, continuous", cx:"10' easy",
-    n:"Compare your average heart rate with your earlier tempo sessions."})]
+  [easy(45), CLUB(), easy(40,1), tempo(2,12,"4'58","2'30")],
+  [easy(45), CLUB(), easy(40), long("65' easy\n+ 15' from 5'20 to 5'10/km")],
+  [easy(30), S("club",{km:"4"}), easy(30), S("test",{
+    wx:"12' easy", mx:"20' at 4'52/km, controlled", cx:"8' easy",
+    n:"Taper week: keep this controlled, finish fresh, and compare heart rate only if you feel good."})]
 ];
 
 // Week types (you can change each one from the calendar). Weeks of the plan above, in order:
@@ -343,11 +418,11 @@ const mondayOf = d => addDays(d, -((d.getDay()+6)%7));
 const first = new Date(START+"T00:00:00");
 const END = addDays(first, WEEKS.length*7-1);
 const VIEW = new Date(VIEW_START+"T00:00:00");
-const todayISO = iso(new Date());
-const today0 = new Date(todayISO+"T00:00:00");
-const weekStart = mondayOf(today0);
+let todayISO = iso(new Date());
+let today0 = new Date(todayISO+"T00:00:00");
+let weekStart = mondayOf(today0);
 const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const daysTo = s => Math.round((new Date(s+"T00:00:00") - today0)/DAY);
+const daysTo = s => Math.round((new Date(s+"T00:00:00") - new Date(iso(new Date())+"T00:00:00"))/DAY);
 const plural = n => n+(n === 1 ? " day" : " days");
 
 const SESS = {};
@@ -360,7 +435,13 @@ WEEKS.forEach((w,i) => {
 
 // store.o = edited or added practices, store.rm = removed days, store.done = checkmarks,
 // store.log = what you actually did, store.wt = week types, store.ev = events (null = use EVENTS above)
-let store = {o:{}, rm:{}, done:{}, log:{}, wt:{}, ev:null};
+function parsePace(value) {
+  const m = String(value||"").trim().match(/^(\d{1,2}):([0-5]\d)$/);
+  return m ? Number(m[1])*60+Number(m[2]) : NaN;
+}
+function paceLabel(seconds) { const n=Math.round(Number(seconds)); return Math.floor(n/60)+":"+String(n%60).padStart(2,"0"); }
+const DEFAULT_PACES = {easy:"6:30/km", tempo:"5:00/km", test:"4:52/km", easySec:390, tempoSec:300, testSec:292, easyMin:6.5, tempoMin:5, testMin:292/60, hr:155};
+let store = {o:{}, rm:{}, done:{}, log:{}, wt:{}, ev:null, paces:{}};
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) store = Object.assign(store, JSON.parse(raw));
@@ -369,7 +450,26 @@ try {
     if (old.done) store.done = old.done;
   }
 } catch(e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
+if (Array.isArray(store.ev)) store.ev = store.ev.map(e => e && e.id === "e-10k" ? Object.assign({}, e, {note:""}) : e);
+const savedPaces = store.paces || {};
+store.paces = Object.assign({}, DEFAULT_PACES, savedPaces);
+// Migrate older numeric-minutes settings to integer seconds/km.
+for (const k of ["easy","tempo","test"]) {
+  const sk = k+"Sec", mk = k+"Min";
+  if (!(Number(savedPaces[sk]) > 0)) {
+    const old = Number(savedPaces[mk]);
+    store.paces[sk] = Number.isFinite(old) && old > 0 ? Math.round(old*60) : DEFAULT_PACES[sk];
+  }
+  store.paces[k] = paceLabel(store.paces[sk])+"/km";
+  store.paces[mk] = store.paces[sk]/60;
+}
+let syncTimer = null;
+let cloudSession = null;
+let syncBusy = false;
+const save = () => {
+  try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {}
+  if (cloudSession && !syncBusy) { clearTimeout(syncTimer); syncTimer = setTimeout(pushCloudState, 700); }
+};
 
 const BLANK = S("easy", {});
 const getS = k => {
@@ -429,7 +529,7 @@ const fmtKm = i => i.v > 0 ? (i.auto?"≈ ":"")+(Number.isInteger(i.v)?i.v:i.v.t
 const km1 = v => String(Math.round(v*10)/10);
 
 // ---------- rendering ----------
-const fmtPace = p => !p ? "" : (p.includes("/") ? p : p+"/km");
+const fmtPace = p => !p ? "" : String(p).replace(/(\d+)'(\d{2})-(\d+)'(\d{2})(?=\/km)/g,"$1:$2-$3:$4").replace(/(\d+)'(\d{2})(?=\/km)/g,"$1:$2").replace(/\/km$/,"/km").replace(/^(\d+:\d{2})$/, "$1/km");
 const block = (label, x, p) => (!x && !p) ? "" :
   '<span class="blk">'+(label ? '<span class="lb">'+label+'</span>' : '')+
   (x ? '<span class="tx">'+esc(x).replace(/\n/g,"<br>")+'</span>' : '')+
@@ -438,6 +538,7 @@ const block = (label, x, p) => (!x && !p) ? "" :
 function logText(g, k){
   const L = store.log[k] || {}, bits = [];
   if (String(L.km||"").trim()) bits.push(String(L.km).trim()+" km");
+  if (String(L.duration||"").trim()) bits.push(String(L.duration).trim());
   if (String(L.hr||"").trim()){
     const hr = num(L.hr);
     bits.push(String(L.hr).trim()+" bpm"+(g.t === "easy" && hr > HR_EASY ? " (above "+HR_EASY+")" : ""));
@@ -446,9 +547,33 @@ function logText(g, k){
   return bits.join(" · ");
 }
 
+function estimatedDuration(g){
+  const km=kmInfo(g).v;
+  if(!(km>0)) return '';
+  const paces=store.paces||DEFAULT_PACES;
+  let pace=(Number(paces.easySec)||390)/60;
+  if(g.t==='tempo') pace=(Number(paces.tempoSec)||300)/60;
+  if(g.t==='test') pace=(Number(paces.testSec)||292)/60;
+  if(g.t==='club') pace=6.3;
+  let minutes=km*pace;
+  if(g.t==='tempo'||g.t==='test') minutes+=5;
+  const total=Math.round(minutes), h=Math.floor(total/60), m=total%60;
+  return 'Est. '+(h? h+'h ':'')+m+' min';
+}
+function planText(g, value) {
+  if (!value) return value;
+  const p=store.paces||DEFAULT_PACES;
+  const target=g.t==="easy" ? p.easy : g.t==="tempo" ? p.tempo : g.t==="test" ? p.test : null;
+  let out=String(value);
+  if (target && /\d+'\d{2}(?:-\d+'\d{2})?\/km/.test(out)) {
+    out=out.replace(/\d+'\d{2}(?:-\d+'\d{2})?\/km/g, target);
+  }
+  return out.replace(/(\d+)'(\d{2})-(\d+)'(\d{2})(?=\/km)/g,"$1:$2-$3:$4").replace(/(\d+)'(\d{2})(?=\/km)/g,"$1:$2");
+}
 function chipHTML(g, k){
+  g=Object.assign({},g,{wx:planText(g,g.wx),mx:planText(g,g.mx),cx:planText(g,g.cx),mp:planText(g,g.mp)});
   const km = fmtKm(kmInfo(g));
-  return '<span class="top"><b class="km">'+(km || "&nbsp;")+'</b><span class="ty">'+esc(LABELS[g.t]||"")+'</span></span>'+
+  return '<span class="top"><b class="km">'+(km || "&nbsp;")+'</b><span class="ty">'+esc(LABELS[g.t]||"")+'</span></span>'+ '<span class="pc">'+esc(estimatedDuration(g))+'</span>'+
     block("Warm-up", g.wx, "")+
     block("", g.mx, g.t === "easy" ? g.mp : "")+
     block("Cool-down", g.cx, "")+
@@ -502,21 +627,26 @@ function weekSummary(mon, wf, last){
     const k = iso(x), g = getS(k);
     if (g) planned += kmInfo(g).v;
     const L = store.log[k];
-    if (L){ const v = num(L.km); if (v > 0) logged += v; }
+    if (L && store.done[k]){ const v = num(L.km); if (v > 0) logged += v; }
   }
   const mk = iso(mon);
   const el = document.createElement("div"); el.className = "wk";
   const wl = document.createElement("span"); wl.className = "wl";
   wl.textContent = shortFmt.format(wf)+" – "+shortFmt.format(last);
-  const sel = document.createElement("select");
-  sel.setAttribute("aria-label","Week type");
-  const o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Week type"; sel.append(o0);
-  PHASES.forEach(p => { const o = document.createElement("option"); o.value = p; o.textContent = p; sel.append(o); });
-  sel.value = weekPhase(mk);
-  sel.onchange = () => { store.wt[mk] = sel.value; save(); };
-  el.append(wl, sel);
+  const phase = document.createElement("button");
+  phase.type = "button"; phase.className = "week-phase";
+  phase.setAttribute("aria-label","Change training phase for this week");
+  const currentPhase = weekPhase(mk);
+  phase.textContent = currentPhase || "Set phase";
+  phase.title = "Click to cycle through training phases";
+  phase.onclick = () => {
+    const current = weekPhase(mk), idx = PHASES.indexOf(current);
+    const next = PHASES[(idx+1)%PHASES.length];
+    store.wt[mk] = next; save(); render();
+  };
+  el.append(wl, phase);
   if (planned){ const s = document.createElement("span"); s.textContent = "Planned ≈ "+km1(planned)+" km"; el.append(s); }
-  if (logged){ const s = document.createElement("span"); s.textContent = "Logged "+km1(logged)+" km"; el.append(s); }
+  const s = document.createElement("span"); s.textContent = "Actual completed "+km1(logged)+" km"; el.append(s);
   return el;
 }
 
@@ -582,8 +712,9 @@ function evRow(e, past){
   b.type = "button"; b.className = "ev"+(past?" past":"");
   const n = e.date ? daysTo(e.date) : null;
   const go = n === null ? "" : n > 1 ? plural(n) : n === 1 ? "Tomorrow" : n === 0 ? "Today" : "Past";
+  const gp = goalPace(e.goalTime, e.goalKm || (e.type === "run" ? 10 : 0));
   b.innerHTML = '<span class="evd">'+(e.date ? esc(fullFmt.format(new Date(e.date+"T00:00:00"))) : "No date")+'</span>'+
-    '<span class="evn">'+esc(e.name || "Untitled event")+(e.note ? '<small>'+esc(String(e.note).split("\n")[0])+'</small>' : '')+'</span>'+
+    '<span class="evn">'+esc(e.name || "Untitled event")+(e.id !== 'e-10k' && e.note ? '<small>'+esc(String(e.note).split("\n")[0])+'</small>' : '')+(gp ? '<small class="goal-label">Goal '+esc(formatGoalTime(e.goalTime))+' · '+gp+'/km</small>' : '')+'</span>'+
     '<span class="evtype ty-'+(TYPES[e.type] ? e.type : "other")+'">'+(TYPES[e.type]||"Other")+'</span>'+
     '<span class="evg">'+go+'</span>';
   b.onclick = () => openEv(e.id);
@@ -600,13 +731,14 @@ function renderEvents(){
     const h = document.createElement("p"); h.className = "evh"; h.textContent = "Past events"; box.append(h);
     past.forEach(e => box.append(evRow(e, true)));
   }
+  renderGoals();
   countdown();
 }
 // Top of the page: days to the next event, then the ones after it
 function countdown(){
   const up = getEv().filter(e => e.date && e.date >= todayISO).sort((a,b) => a.date.localeCompare(b.date));
   const el = document.getElementById("count"), el2 = document.getElementById("count2");
-  if (!up.length){ el.textContent = "No upcoming event. Add one in Races & events."; el2.textContent = ""; return; }
+  if (!up.length){ el.textContent = "No upcoming race. Add one in Races."; el2.textContent = ""; return; }
   const e = up[0], n = daysTo(e.date), name = e.name || "your event";
   el.textContent = n > 1 ? plural(n)+" to "+name+" · "+longFmt.format(new Date(e.date+"T00:00:00"))
     : n === 1 ? "Tomorrow: "+name : "Today: "+name+". Good luck!";
@@ -616,11 +748,122 @@ function countdown(){
   }).join(" · ");
 }
 
+function timeSeconds(value){
+  const x=String(value||"").trim(); if(!x) return 0;
+  const a=x.split(":").map(Number); if(a.some(Number.isNaN)) return 0;
+  if(a.length===3) return a[0]*3600+a[1]*60+a[2];
+  if(a.length===2) return a[0]*60+a[1];
+  return 0;
+}
+function goalPace(time, distance){const sec=timeSeconds(time), km=num(distance); if(!sec||!km||km<=0)return ""; const p=Math.round(sec/km);return Math.floor(p/60)+"'"+pad(p%60);}
+function formatGoalTime(value){const sec=timeSeconds(value);if(!sec)return value||"Not set";const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;if(h&&m)return h+" h "+m+" min"+(s?" "+s+" s":"");if(h)return h+" h"+(m?" "+m+" min":"")+(s?" "+s+" s":"");return m+" min"+(s?" "+s+" s":"");}
+function renderGoals(){
+ const box=document.getElementById("goalList"); if(!box)return; box.innerHTML="";
+ const events=getEv(); if(!events.length){box.innerHTML='<p class="note">Add an event to set a goal.</p>';return;}
+ events.forEach(e=>{const pace=goalPace(e.goalTime,e.goalKm||(e.type==="run"?10:0));const row=document.createElement("div");row.className="ev";row.style.cursor="default";row.innerHTML='<span class="evd">'+(e.date?esc(fullFmt.format(new Date(e.date+"T00:00:00"))):"No date")+'</span><span class="evn">'+esc(e.name||"Untitled event")+'<small>Target: '+esc(formatGoalTime(e.goalTime))+'</small></span><span class="evtype ty-run">Goal</span><span class="evg">'+(pace?esc(pace)+"/km":"Set goal")+'</span>';box.append(row);});
+}
+function loggedEntries(){return Object.keys(store.log).filter(k=>store.done[k]&&num(store.log[k].km)>0).sort();}
+function renderDashboardWeek(){
+ const today=new Date(iso(new Date())+"T00:00:00"), monday=mondayOf(today), wrap=document.getElementById('dashboardWeekPlan');
+ document.getElementById('dashboardWeekRange').textContent=shortFmt.format(monday)+' – '+shortFmt.format(addDays(monday,6));
+ wrap.innerHTML='';
+ for(let i=0;i<7;i++){
+  const d=addDays(monday,i),k=iso(d),g=getS(k),done=!!store.done[k],L=store.log[k]||{};
+  const b=document.createElement('button');b.type='button';b.className='week-plan-day'+(g&&g.t?' t-'+g.t:'')+(done?' is-completed':'');
+  const name=longFmt.format(d), planned=g?fmtKm(kmInfo(g)):'Rest / no planned session';
+  let detail='';
+  if(g){detail=(LABELS[g.t]||'Workout')+' · '+planned; if(g.mx)detail+='\n'+g.mx; if(g.mp)detail+=' · '+g.mp;}
+  if(done&&num(L.km)>0)detail+='\nActual: '+num(L.km)+' km';
+  b.innerHTML='<span class="wday"><span class="wday-label">'+esc(name)+'</span><span>'+(done?'<span class="wcheck" aria-label="Completed">✓</span>':'')+'</span></span><span class="wdetail">'+esc(detail||'Rest day').replace(/\n/g,'<br>')+(done?'<br><span class="wstatus-label">Completed</span>':'')+'</span>';
+  b.addEventListener('click',()=>{if(g)openDay(k);else addPractice(k)});wrap.append(b);
+ }
+}
+function renderDashboard(){
+ renderDashboardWeek();
+ const entries=loggedEntries(), actual=entries.reduce((a,k)=>a+num(store.log[k].km),0), completed=Object.keys(store.done).filter(k=>store.done[k]).length;
+ const monday=mondayOf(new Date(iso(new Date())+"T00:00:00")), weekKeys=[];for(let d=new Date(monday);d<=addDays(monday,6);d=addDays(d,1))weekKeys.push(iso(d));
+ const planned=weekKeys.reduce((a,k)=>{const g=getS(k);return a+(g?kmInfo(g).v:0)},0), weekActual=weekKeys.reduce((a,k)=>a+(store.done[k]&&store.log[k]&&num(store.log[k].km)>0?num(store.log[k].km):0),0);
+ document.getElementById("dashboardMetrics").innerHTML=[['This week planned',planned.toFixed(1)+' km'],['This week completed',weekActual.toFixed(1)+' km']].map(x=>'<div class="metric"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>').join('');
+ const observations=[];
+ if(entries.length){observations.push('You have logged '+entries.length+' completed workout'+(entries.length===1?'':'s')+' with an actual distance.');
+ const withHr=entries.filter(k=>num(store.log[k].hr)>0);if(withHr.length){const avg=withHr.reduce((a,k)=>a+num(store.log[k].hr),0)/withHr.length;observations.push('Your average heart rate across '+withHr.length+' logged workout'+(withHr.length===1?'':'s')+' with heart-rate data is '+Math.round(avg)+' bpm.');}
+ const withFeel=entries.filter(k=>store.log[k].feel==='Heavy');if(withFeel.length)observations.push('You marked '+withFeel.length+' completed workout'+(withFeel.length===1?'':'s')+' as Heavy.');
+ const paces=entries.map(k=>({k,pace:actualPace(k)})).filter(x=>x.pace>0);if(paces.length>=2){const firstP=paces[0].pace,lastP=paces[paces.length-1].pace;if(lastP<firstP)observations.push('Your latest logged pace is faster than your earliest logged pace.');else if(lastP>firstP)observations.push('Your latest logged pace is slower than your earliest logged pace.');}
+ } else observations.push('Complete and log workouts to see observations based on your data.');
+ document.getElementById('observationList').innerHTML=observations.map(x=>'<li>'+esc(x)+'</li>').join('');
+}
+function actualPace(k){const L=store.log[k]||{};const km=num(L.km),sec=timeSeconds(L.duration||L.time);return km>0&&sec>0?sec/km:0;}
+function renderStatistics(range='weekly'){
+ // Plot each logged practice as its own point. The range toggle filters the
+ // time window; it does not collapse several workouts into a single weekly dot.
+ const today=new Date(iso(new Date())+'T00:00:00');
+ const cutoff=new Date(today);
+ if(range==='weekly') cutoff.setDate(cutoff.getDate()-55); // latest eight weeks
+ else cutoff.setMonth(cutoff.getMonth()-11), cutoff.setDate(1); // latest twelve months
+ const entries=Object.keys(store.log||{}).filter(k=>{
+   const L=store.log[k]||{}; const d=new Date(k+'T00:00:00');
+   return d>=cutoff && d<=addDays(today,1) && (num(L.km)>0 || num(L.hr)>0 || actualPace(k)>0);
+ }).sort();
+ const labels=entries.map(k=>{
+   const d=new Date(k+'T00:00:00');
+   return range==='weekly' ? new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short'}).format(d) : new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short'}).format(d);
+ });
+ const mileage=entries.map(k=>num((store.log[k]||{}).km)>0?num(store.log[k].km):null);
+ const pace=entries.map(k=>{const p=actualPace(k);return p>0?p/60:null;});
+ const hr=entries.map(k=>num((store.log[k]||{}).hr)>0?num((store.log[k]||{}).hr):null);
+ drawChart('mileageChart',mileage,labels,'km');
+ drawChart('paceChart',pace,labels,'min/km');
+ drawChart('hrChart',hr,labels,'bpm');
+ const summary=document.getElementById('statsSummary');
+ if(summary){
+   const distanceCount=mileage.filter(v=>v>0).length;
+   const paceCount=pace.filter(v=>v>0).length;
+   const hrCount=hr.filter(v=>v>0).length;
+   summary.textContent=distanceCount
+     ? distanceCount+' workout'+(distanceCount===1?'':'s')+' with distance logged in this period. Pace available for '+paceCount+' and heart rate available for '+hrCount+'. Each workout is shown as a separate point.'
+     : 'No workouts with actual distance logged in this period. Enter actual distance, duration and heart rate in each workout to populate the relevant charts.';
+ }
+}
+function drawChart(id,values,labels,unit){
+ const c=document.getElementById(id);if(!c)return;
+ const parent=c.parentElement;const cssWidth=Math.max(280,(parent?parent.clientWidth-32:320));const h=250,dpr=window.devicePixelRatio||1;
+ c.style.width='100%';c.style.height=h+'px';c.width=Math.round(cssWidth*dpr);c.height=Math.round(h*dpr);
+ const ctx=c.getContext('2d');if(!ctx)return;ctx.setTransform(dpr,0,0,dpr,0,0);
+ const w=cssWidth,padL=42,padR=12,padT=22,padB=48;ctx.clearRect(0,0,w,h);
+ ctx.font='11px Arial, sans-serif';ctx.strokeStyle='#dbe4ec';ctx.fillStyle='#536477';ctx.lineWidth=1;
+ for(let i=0;i<4;i++){const y=padT+(h-padT-padB)*i/3;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();}
+ const valid=values.filter(v=>Number.isFinite(v)&&v>0);
+ if(!valid.length){ctx.fillStyle='#75869a';ctx.textAlign='center';ctx.font='13px Arial, sans-serif';ctx.fillText(unit==='km'?'No distance data in this period':unit==='min/km'?'Add actual distance and duration to see pace':'No heart-rate data in this period',w/2,h/2);ctx.textAlign='left';return;}
+ const max=Math.max(...valid,1)*1.15,plotW=w-padL-padR,plotH=h-padT-padB,step=plotW/Math.max(values.length,1);
+ ctx.strokeStyle='#2f54e0';ctx.fillStyle='#2f54e0';ctx.lineWidth=2;ctx.beginPath();let started=false;
+ values.forEach((v,i)=>{const x=padL+step*(i+.5);if(Number.isFinite(v)&&v>0){const y=h-padB-(v/max)*plotH;if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);}else{started=false;ctx.stroke();ctx.beginPath();}});ctx.stroke();
+ values.forEach((v,i)=>{if(!Number.isFinite(v)||v<=0)return;const x=padL+step*(i+.5),y=h-padB-(v/max)*plotH;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#2f54e0';ctx.fill();ctx.fillStyle='#536477';ctx.font='10px Arial, sans-serif';const label=unit==='min/km'?formatPaceValue(v*60):(Math.round(v*10)/10)+'';ctx.fillText(label,Math.min(w-padR-26,Math.max(padL,x-12)),Math.max(padT+10,y-8));});
+ // Keep date labels readable when many practices are logged.
+ ctx.fillStyle='#536477';ctx.font='10px Arial, sans-serif';const stride=Math.max(1,Math.ceil(labels.length/7));
+ labels.forEach((label,i)=>{if(i%stride!==0 && i!==labels.length-1)return;const x=padL+step*(i+.5);ctx.save();ctx.translate(Math.max(padL,Math.min(w-padR,x)),h-18);ctx.rotate(-0.25);ctx.fillText(label,-12,0);ctx.restore();});
+ ctx.fillStyle='#536477';ctx.font='11px Arial, sans-serif';ctx.fillText(unit,padL,12);
+}
+function formatPaceValue(minutes){const total=Math.round(minutes*60);return Math.floor(total/60)+':'+String(total%60).padStart(2,'0');}
+
+function renderPaceSettings(){
+  const p=store.paces || DEFAULT_PACES;
+  document.getElementById('paceEasyDisplay').textContent=p.easy;
+  document.getElementById('paceTempoDisplay').textContent=p.tempo;
+  document.getElementById('paceTestDisplay').textContent=p.test;
+  document.getElementById('paceHrDisplay').textContent=p.hr;
+  document.getElementById('settingEasy').value=paceLabel(p.easySec ?? 390);
+  document.getElementById('settingTempo').value=paceLabel(p.tempoSec ?? 300);
+  document.getElementById('settingTest').value=paceLabel(p.testSec ?? 292);
+  document.getElementById('settingHr').value=p.hr;
+}
 function render(){
+  renderPaceSettings();
   const evMap = evByDate();
   renderCalendar(evMap);
   renderArchive(evMap);
   renderEvents();
+  renderDashboard();
+  const range=document.querySelector('[data-range].active')?.dataset.range||'weekly'; renderStatistics(range);
 }
 
 // ---------- practice dialog ----------
@@ -699,7 +942,7 @@ document.getElementById("dReset").onclick = () => {
   render();
 };
 twoStep(document.getElementById("resetAll"), "Tap again to erase everything", () => {
-  store = {o:{}, rm:{}, done:{}, log:{}, wt:{}, ev:null}; save(); render();
+  store = {o:{}, rm:{}, done:{}, log:{}, wt:{}, ev:null, paces:Object.assign({},DEFAULT_PACES)}; save(); render();
 });
 
 // ---------- event dialog ----------
@@ -711,12 +954,14 @@ function openEv(id){
   const e = getEv().find(x => x.id === id); if (!e) return;
   evCur = id;
   evFields.forEach(el => { el.value = e[el.dataset.e] ?? ""; });
-  evDlg.showModal();
+  updateGoalPace(); evDlg.showModal();
 }
+function updateGoalPace(){const pace=goalPace(document.getElementById('evGoalTime').value,document.getElementById('evGoalKm').value||(document.getElementById('evType').value==='run'?10:0));document.getElementById('evGoalPace').textContent=pace?'Equivalent average pace: '+pace+'/km':'Enter a target time and distance to calculate pace.';}
 evFields.forEach(el => el.addEventListener("input", () => {
   store.ev = getEv().map(x => x.id === evCur ? Object.assign({}, x, {[el.dataset.e]: el.value}) : x);
-  save(); render();
+  updateGoalPace(); save(); render();
 }));
+document.getElementById('evType').addEventListener('change',updateGoalPace);
 document.getElementById("evAdd").onclick = () => {
   const id = "e"+Date.now();
   store.ev = getEv().concat([{id, name:"", date:"", type:"run", note:""}]);
@@ -729,8 +974,27 @@ twoStep(document.getElementById("evRemove"), "Tap again to remove", () => {
 document.getElementById("evDone").onclick = () => evDlg.close();
 evDlg.addEventListener("click", e => { if (e.target === evDlg) evDlg.close(); });
 
+// ---------- pace settings ----------
+document.getElementById('paceSettingsForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const easy=parsePace(document.getElementById('settingEasy').value);
+  const tempo=parsePace(document.getElementById('settingTempo').value);
+  const test=parsePace(document.getElementById('settingTest').value);
+  const hr=Number(document.getElementById('settingHr').value);
+  if(!Number.isFinite(easy)||easy<240||easy>600||!Number.isFinite(tempo)||tempo<180||tempo>480||!Number.isFinite(test)||test<180||test>480||!Number.isFinite(hr)||hr<80||hr>220){document.getElementById('settingsMessage').textContent='Enter paces as min:sec (e.g. 6:30) and valid values: easy 4:00–10:00, tempo/test 3:00–8:00, heart rate 80–220 bpm.';return;}
+  store.paces={easy:paceLabel(easy)+"/km",tempo:paceLabel(tempo)+"/km",test:paceLabel(test)+"/km",easySec:easy,tempoSec:tempo,testSec:test,easyMin:easy/60,tempoMin:tempo/60,testMin:test/60,hr};
+  save(); render();
+  document.getElementById('settingsMessage').textContent='Pace settings saved and training plan updated.';
+});
+document.getElementById('resetPaces').addEventListener('click',()=>{
+  store.paces=Object.assign({},DEFAULT_PACES);save();renderPaceSettings();
+  render(); document.getElementById('settingsMessage').textContent='Default pace settings restored.';
+});
+
 // ---------- header helpers ----------
 document.getElementById("goToday").onclick = () => {
+  document.querySelectorAll('.side-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='training'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='training'));
   const el = document.getElementById("d-"+todayISO) || document.getElementById("calendrier");
   el.scrollIntoView({behavior:"smooth", block:"center"});
 };
@@ -744,7 +1008,78 @@ const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.
 }), {threshold:.15}) : null;
 document.querySelectorAll(".rise").forEach(el => io ? io.observe(el) : el.classList.add("in"));
 
+document.querySelectorAll('.side-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.side-tab').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===btn.dataset.tab));if(btn.dataset.tab==='statistics')requestAnimationFrame(()=>requestAnimationFrame(()=>renderStatistics(document.querySelector('[data-range].active')?.dataset.range||'weekly')));window.scrollTo({top:0,behavior:'smooth'});}));
+document.querySelectorAll('.race-subtab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.race-subtab').forEach(b=>b.classList.toggle('active',b===btn));document.getElementById('eventsView').hidden=btn.dataset.raceTab!=='eventsView';document.getElementById('goalsView').hidden=btn.dataset.raceTab!=='goalsView';renderGoals();}));
+document.querySelectorAll('[data-range]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-range]').forEach(b=>b.classList.toggle('active',b===btn));renderStatistics(btn.dataset.range);}));
+
+// ---------- Supabase cloud sync (free tier; requires one-time project setup) ----------
+const SYNC_CONFIG_KEY = "10k-training-sync-config-v1";
+const SYNC_SESSION_KEY = "10k-training-sync-session-v1";
+let syncConfig = {};
+try { syncConfig = JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY)||"{}"); } catch(e) {}
+try { cloudSession = JSON.parse(localStorage.getItem(SYNC_SESSION_KEY)||"null"); } catch(e) {}
+const syncUrlEl=document.getElementById("syncUrl"), syncKeyEl=document.getElementById("syncKey"), syncEmailEl=document.getElementById("syncEmail"), syncPassEl=document.getElementById("syncPassword"), syncMsg=document.getElementById("syncMessage");
+if(syncUrlEl){syncUrlEl.value=syncConfig.url||"";syncKeyEl.value=syncConfig.key||"";syncEmailEl.value=syncConfig.email||"";}
+function showSyncMessage(msg){ if(syncMsg) syncMsg.textContent=msg; }
+function currentSyncConfig(){return {url:String(syncUrlEl.value||"").trim().replace(/\/$/,""),key:String(syncKeyEl.value||"").trim(),email:String(syncEmailEl.value||"").trim()};}
+async function authCloud(createAccount=false){
+  const cfg=currentSyncConfig(); const password=syncPassEl.value;
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(cfg.url)||!cfg.key||!cfg.email||!password){showSyncMessage("Enter a valid Supabase URL, publishable/anon key, email and password.");return;}
+  localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(cfg));
+  showSyncMessage(createAccount?"Creating account…":"Signing in…");
+  const endpoint=createAccount?"/auth/v1/signup":"/auth/v1/token?grant_type=password";
+  const response=await fetch(cfg.url+endpoint,{method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.key},body:JSON.stringify({email:cfg.email,password})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok){showSyncMessage(data.msg||data.message||data.error_description||data.error||"Could not authenticate. Check the URL/key, credentials and email confirmation settings.");return;}
+  if(!data.access_token){showSyncMessage(createAccount?"Account created. Check your email if confirmation is enabled, then sign in.":"No session returned. Check whether email confirmation is required.");return;}
+  cloudSession={access_token:data.access_token,refresh_token:data.refresh_token,user:data.user};
+  localStorage.setItem(SYNC_SESSION_KEY,JSON.stringify(cloudSession));
+  await pullCloudState(true);
+}
+async function ensureCloudSession(){
+  if(!cloudSession||!syncConfig.url||!syncConfig.key)return false;
+  try {
+    const payload=JSON.parse(atob(cloudSession.access_token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+    if(payload.exp*1000>Date.now()+120000)return true;
+  } catch(e) {}
+  if(!cloudSession.refresh_token) return false;
+  const r=await fetch(syncConfig.url+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"Content-Type":"application/json","apikey":syncConfig.key},body:JSON.stringify({refresh_token:cloudSession.refresh_token})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!d.access_token){showSyncMessage("Your cloud session expired. Sign in again in Settings.");return false;}
+  cloudSession={access_token:d.access_token,refresh_token:d.refresh_token,user:d.user||cloudSession.user};
+  localStorage.setItem(SYNC_SESSION_KEY,JSON.stringify(cloudSession));
+  return true;
+}
+async function pullCloudState(showMessage=true){
+  if(!cloudSession||!syncConfig.url||!syncConfig.key)return;
+  try{
+    if(!(await ensureCloudSession())) return;
+    const cfg=syncConfig, uid=cloudSession.user.id;
+    const r=await fetch(cfg.url+"/rest/v1/app_state?select=payload&user_id=eq."+encodeURIComponent(uid),{headers:{"apikey":cfg.key,"Authorization":"Bearer "+cloudSession.access_token}});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.message||"Could not read cloud state. Check the SQL table and RLS policy.");
+    if(data.length&&data[0].payload){syncBusy=true;store=Object.assign(store,data[0].payload);store.paces=Object.assign({},DEFAULT_PACES,store.paces||{});save();syncBusy=false;render();if(showMessage)showSyncMessage("Signed in. Training plan loaded from cloud and synced.");}
+    else {await pushCloudState();if(showMessage)showSyncMessage("Signed in. Your current plan was uploaded to the cloud.");}
+  }catch(err){syncBusy=false;if(showMessage)showSyncMessage(err.message||"Cloud sync failed.");}
+}
+async function pushCloudState(){
+  if(!cloudSession||!syncConfig.url||!syncConfig.key||syncBusy)return;
+  try{
+    if(!(await ensureCloudSession())) return;
+    const r=await fetch(syncConfig.url+"/rest/v1/app_state?on_conflict=user_id",{method:"POST",headers:{"apikey":syncConfig.key,"Authorization":"Bearer "+cloudSession.access_token,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:cloudSession.user.id,payload:store,updated_at:new Date().toISOString()})});
+    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.message||"Cloud save failed. Check the table and RLS policy.");}
+    showSyncMessage("Cloud sync connected · latest changes saved.");
+  }catch(err){showSyncMessage(err.message||"Cloud save failed. Reconnect from Settings if your session expired.");}
+}
+document.getElementById("syncForm").addEventListener("submit",e=>{e.preventDefault();syncConfig=currentSyncConfig();authCloud(false).catch(err=>showSyncMessage(err.message||"Sign-in failed."));});
+document.getElementById("syncSignup").addEventListener("click",()=>{syncConfig=currentSyncConfig();authCloud(true).catch(err=>showSyncMessage(err.message||"Account creation failed."));});
+document.getElementById("syncLogout").addEventListener("click",()=>{cloudSession=null;localStorage.removeItem(SYNC_SESSION_KEY);showSyncMessage("Disconnected. Local data remains on this device.");});
+if(cloudSession&&syncConfig.url&&syncConfig.key){pullCloudState(false);}
+
 render();
+window.__lastCountdownDate=iso(new Date());
+setInterval(()=>{const fresh=iso(new Date());if(fresh!==window.__lastCountdownDate){window.__lastCountdownDate=fresh;todayISO=fresh;today0=new Date(fresh+'T00:00:00');weekStart=mondayOf(today0);render();}},60000);
+window.addEventListener('resize',()=>{if(document.getElementById('statistics').classList.contains('active'))renderStatistics(document.querySelector('[data-range].active')?.dataset.range||'weekly');});
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
