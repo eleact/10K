@@ -140,3 +140,12 @@ document.getElementById("reset").onclick = () => {
   if (confirm("Effacer toutes tes modifications et cases cochées ?")) {
     store = {text:{}, done:{}, type:{}}; save(); render();
   }
+};
+render();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
