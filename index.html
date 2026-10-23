@@ -1,122 +1,193 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>10K training</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1f3a5f">
+<meta name="theme-color" content="#1a2333">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="10K training">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap">
 <style>
-:root{
-  --bg:#f1f4f7; --card:#fff; --text:#17212b; --muted:#6a7683; --line:#e0e5ea; --accent:#1f3a5f;
-  --easy:#d9eedc; --club:#d3e5f8; --long:#e4d8f4; --tempo:#fcdcb8; --test:#f6cdc8; --race:#1f3a5f; --race-fg:#fff;
-}
-@media (prefers-color-scheme:dark){
-  :root{
-    --bg:#10151a; --card:#1a2128; --text:#e8ecf0; --muted:#97a2ae; --line:#2a333c; --accent:#9dbfee;
-    --easy:#21392a; --club:#1f3550; --long:#33294a; --tempo:#523a20; --test:#552a26; --race:#9dbfee; --race-fg:#10151a;
-  }
-}
+:root{--mist:#dbe4ec;--navy:#1a2333;--ink:#0b1019;--pale:#edf2f6;--rule:#9db1c4;--slate:#536477;--cobalt:#2f54e0}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:980px;margin:0 auto;padding:28px 14px 56px}
-h1{font-size:2.4rem;line-height:1;margin:0;letter-spacing:-.02em;color:var(--accent)}
-.sub{margin:6px 0 18px;color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
-.legend span{font-size:.78rem;padding:2px 10px;border-radius:10px}
-.month{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px}
-.month h2{margin:0 0 10px;font-size:1.15rem;text-transform:capitalize}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.wd{font-size:.75rem;color:var(--muted);text-align:center;padding-bottom:2px}
-.day{min-height:92px;border:1px solid var(--line);border-radius:6px;padding:4px;display:flex;flex-direction:column;gap:4px}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--mist);color:var(--ink);font:400 16px/1.45 Geist,system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
+ repeating-radial-gradient(circle at 88% 12%,transparent 0 150px,rgba(157,177,196,.55) 150px 151px),
+ repeating-radial-gradient(circle at 6% 92%,transparent 0 190px,rgba(157,177,196,.45) 190px 191px)}
+main{padding:0 12px 40px}
+nav{position:sticky;top:10px;z-index:10;max-width:1100px;margin:10px auto 0;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-radius:999px;box-shadow:0 12px 30px -18px rgba(26,35,51,.5)}
+nav b{font-weight:600;letter-spacing:-.03em;font-size:1.05rem}
+nav .sp{margin-left:auto;display:flex;gap:18px}
+nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.navy a:focus-visible,.navy button:focus-visible{outline-color:#fff}
+.slide{position:relative;max-width:1100px;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
+.slide::before{content:"";position:absolute;inset:12px;pointer-events:none;opacity:.4;background:
+ linear-gradient(currentColor,currentColor) 0 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 100% 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 0 100%/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 100%/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 100% 100%/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 100%/1px 14px no-repeat}
+.white{background:#fff}.pale{background:var(--pale)}.navy{background:var(--navy);color:#fff}
+h1,h2{font-weight:500;letter-spacing:-.045em;line-height:.95;margin:0}
+h1{font-size:clamp(3rem,10vw,7rem);margin:26px 0 28px}
+h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize}
+.hero h1 span{display:block;animation:streak .9s cubic-bezier(.2,.7,.2,1) both}
+.hero h1 span:nth-child(2){margin-left:7%;animation-delay:.12s}
+@keyframes streak{from{opacity:0;transform:translateX(-80px) skewX(-10deg)}}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.cols div{border-left:1px solid var(--rule);padding:4px 22px}
+.cols div:first-child{border-left:0;padding-left:0}
+.cols h3{margin:0;font-weight:500;font-size:.95rem;color:var(--slate)}
+.cols p{margin:6px 0 0;color:var(--slate);font-size:.92rem}
+.cols strong{display:block;font-weight:500;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.04em;margin-top:6px}
+.legend{max-width:1100px;margin:22px auto 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.legend span{font-size:.78rem;padding:2px 11px;border-radius:999px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.wd{font-size:.75rem;color:var(--slate);text-align:center;padding-bottom:2px}
+.day{min-height:94px;border:1px solid var(--mist);border-radius:8px;padding:5px;display:flex;flex-direction:column;gap:4px}
 .day.empty{border:0}
-.day.off{background:transparent;opacity:.55}
-.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.num{font-size:.78rem;color:var(--muted)}
-.chip{flex:1;font:inherit;text-align:left;border:0;border-radius:5px;padding:5px 6px;cursor:pointer;color:var(--text);font-size:.78rem;font-weight:600;line-height:1.25}
-.chip:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.day.off{opacity:.5}
+.day.today{border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
+.num{font-size:.78rem;color:var(--slate)}
+.chip{flex:1;font:inherit;font-weight:500;font-size:.78rem;line-height:1.25;text-align:left;border:0;border-radius:6px;padding:6px 7px;cursor:pointer;color:var(--ink)}
 .chip.done::before{content:"✓ "}
-.chip.done{opacity:.6}
-.t-easy{background:var(--easy)} .t-club{background:var(--club)} .t-long{background:var(--long)}
-.t-tempo{background:var(--tempo)} .t-test{background:var(--test)} .t-race{background:var(--race);color:var(--race-fg)}
+.chip.done{opacity:.55}
+.t-easy{background:var(--pale)}.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.t-long{background:var(--rule)}
+.t-tempo{background:#bcd0f7}.t-test{background:var(--navy);color:#fff}.t-race{background:var(--cobalt);color:#fff}
 .mini{display:none}
-.tools{margin-top:8px}
-.btn{font:inherit;font-size:.88rem;padding:6px 12px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;cursor:pointer}
-dialog{border:0;border-radius:12px;padding:18px;width:min(460px,94vw);background:var(--card);color:var(--text)}
-dialog::backdrop{background:rgba(0,0,0,.45)}
-dialog h3{margin:0 0 12px;font-size:1.1rem;text-transform:capitalize}
-dialog label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:10px}
-dialog input[type=text],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text)}
+.wordmark{font-size:clamp(3rem,13vw,9rem);font-weight:500;letter-spacing:-.06em;line-height:.9;white-space:nowrap;overflow:hidden;margin:0 0 22px}
+.foot{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;color:#b9c6d4;font-size:.9rem}
+.btn{font:inherit;font-size:.88rem;padding:8px 16px;border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;cursor:pointer}
+dialog{border:0;border-radius:20px;padding:22px;width:min(470px,94vw);background:#fff;color:var(--ink);font-family:inherit}
+dialog::backdrop{background:rgba(11,16,25,.55)}
+dialog h3{margin:0 0 14px;font-size:1.3rem;font-weight:500;letter-spacing:-.03em;text-transform:capitalize}
+dialog label{display:block;font-size:.8rem;color:var(--slate);margin-bottom:10px}
+dialog input[type=text],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--pale);color:var(--ink)}
 dialog textarea{resize:vertical;line-height:1.45}
-dialog .chk{display:flex;align-items:center;gap:8px;color:var(--text);font-size:.95rem}
-.row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+dialog .chk{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:.95rem}
+.row{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+dialog .btn{color:var(--ink)}
+.js .rise{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
+.js .rise.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .rise{opacity:1;transform:none;transition:none}.hero h1 span{animation:none}html{scroll-behavior:auto}}
 @media (max-width:640px){
-  main{padding:20px 8px 40px}
-  .month{padding:10px 6px}
+  main{padding:0 8px 32px}
+  .slide{padding:22px 12px;border-radius:18px}
+  .cols{grid-template-columns:1fr}
+  .cols div{border-left:0;border-top:1px solid var(--rule);padding:14px 0}
+  .cols div:first-child{border-top:0}
   .day{min-height:56px;padding:2px}
-  .full{display:none} .mini{display:inline}
-  .chip{padding:3px;font-size:.72rem;text-align:center}
+  .grid{gap:3px}
+  .full{display:none}.mini{display:inline}
+  .chip{padding:4px 2px;font-size:.7rem;text-align:center}
 }
 </style>
 </head>
 <body>
 <main>
-  <h1>10K training</h1>
-  <p class="sub">9 novembre 2026 au 3 janvier 2027. Objectif : être de plus en plus à l'aise à 5'/km. Touche une séance pour voir le détail et la modifier.</p>
-  <div class="legend" id="legend"></div>
+  <nav>
+    <b>10K training</b>
+    <div class="sp"><a href="#allures">Paces</a><a href="#calendrier">Calendar</a></div>
+  </nav>
+
+  <section class="slide navy hero">
+    <h1><span>10K</span><span>training</span></h1>
+  </section>
+
+  <section class="slide pale rise" id="allures">
+    <h2>Paces</h2>
+    <div class="cols">
+      <div><h3>Easy</h3><strong>6'15-6'45/km</strong><p>Mondays, Fridays and warm-ups. Max heart rate 155.</p></div>
+      <div><h3>Tempo</h3><strong>5'00 then 4'58/km</strong><p>Saturdays. Hard but controlled.</p></div>
+      <div><h3>Test</h3><strong>4'52/km</strong><p>Saturday, January 2. 30 minutes continuous.</p></div>
+    </div>
+  </section>
+
+  <div class="legend" id="calendrier"></div>
   <div id="cal"></div>
-  <div class="tools"><button class="btn" id="resetAll">Tout rétablir</button></div>
+
+  <section class="slide navy rise">
+    <p class="wordmark">10K training</p>
+    <div class="foot"><span>Changes are saved in this browser.</span><button class="btn" id="resetAll">Reset all</button></div>
+  </section>
 </main>
 
 <dialog id="dlg">
   <h3 id="dTitle"></h3>
-  <label>Titre<input type="text" id="dS"></label>
+  <label>Title<input type="text" id="dS"></label>
   <label>Type<select id="dT"></select></label>
-  <label>Détail de la séance<textarea id="dD" rows="7"></textarea></label>
-  <label class="chk"><input type="checkbox" id="dDone"> Séance faite</label>
-  <div class="row"><button class="btn" id="dReset">Rétablir cette séance</button><button class="btn" id="dClose">Fermer</button></div>
+  <label>Details<textarea id="dD" rows="7"></textarea></label>
+  <label class="chk"><input type="checkbox" id="dDone"> Done</label>
+  <div class="row"><button class="btn" id="dReset">Reset this session</button><button class="btn" id="dClose">Close</button></div>
 </dialog>
 
 <script>
-// ---------- PLAN : à modifier ici ----------
-const START = "2026-11-09"; // premier lundi du plan
-const EZ = "6'15-6'45/km";  // allure facile
-const easy = (m, st) => ({t:"easy", s:m+"' facile"+(st?' + 4×20"':''),
-  d:[m+"' footing facile à "+EZ+", pouls max 155"].concat(st?['Ensuite 4×20" lignes droites rapides mais relâchées, 40" de marche entre chaque']:[])});
-const tempo = (n,m,p,r) => ({t:"tempo", s:"Tempo "+n+"×"+m+"' à "+p,
-  d:["Échauffement : 15' à "+EZ, n+"×"+m+"' à "+p+"/km", "Récup : "+r+" de trot lent (7'00/km ou plus) entre les blocs", "Retour au calme : 10' à 6'30/km"]});
-const long = (tot, lines) => ({t:"long", s:"Longue "+tot+"'", d:lines});
+// ---------- PLAN: edit here ----------
+const START = "2026-11-09"; // first Monday of the plan
+const EZ = "6'15-6'45/km";  // easy pace
+const easy = (m, st) => ({t:"easy", s:m+"' easy"+(st?' + 4×20"':''),
+  d:[m+"' easy run at "+EZ+", max heart rate 155"].concat(st?['Then 4×20" strides, fast but relaxed, 40" walk between each']:[])});
+const tempo = (n,m,p,r) => ({t:"tempo", s:"Tempo "+n+"×"+m+"' at "+p,
+  d:["Warm-up: 15' at "+EZ, n+"×"+m+"' at "+p+"/km", "Recovery: "+r+" slow jog (7'00/km or slower) between reps", "Cool-down: 10' at 6'30/km"]});
+const long = (tot, lines) => ({t:"long", s:"Long "+tot+"'", d:lines});
 const CLUB = {t:"club", s:"Club", d:["Club"]};
-const RACE = {t:"race", s:"Course 10K", d:["Course 10K. Objectif 50' (5'00/km).","Km 1 à 5'03-5'05, km 2 à 7 à 5'00, puis donne tout ce qu'il reste à partir du km 8."]};
+const RACE = {t:"race", s:"10K race", d:["10K race. Goal: 50' (5'00/km).","Km 1 at 5'03-5'05, km 2 to 7 at 5'00, then give what you have left from km 8."]};
 const RACE_DATE = "2026-11-08";
 
-// Chaque semaine : [lundi, mercredi, vendredi, samedi]
-const WEEKS = [
-  [{t:"easy", s:"30' très facile", d:["30' très facile à 6'45-7'15/km, ou repos si les jambes sont lourdes"]}, CLUB, easy(40), easy(60)],
-  [easy(45), CLUB, easy(45,1), tempo(2,10,"5'00","3'")],
-  [easy(50), CLUB, easy(45), long(80,["70' facile à "+EZ,"Derniers 10' à 5'20/km"])],
-  [easy(50), CLUB, easy(45,1), tempo(3,10,"4'58","2'")],
-  [easy(40), CLUB, easy(40), long(60,["60' facile à "+EZ+", sans chercher la vitesse"])],
-  [easy(50), CLUB, easy(45,1), tempo(2,15,"4'58","2'30")],
-  [easy(50), CLUB, easy(45), long(90,["70' facile à "+EZ,"Derniers 20' progressifs de 5'20 à 5'10/km"])],
-  [easy(45), CLUB, easy(40,1), {t:"test", s:"Test 30' à 4'52", d:["Échauffement : 15' à "+EZ,"30' continu à 4'52/km","Retour au calme : 10' à 6'30/km","Compare ton pouls moyen avec celui de tes séances tempo précédentes."]}]
-];
-// ---------- fin de la zone à modifier ----------
+// Final race preparation
+const VIEW_START = "2026-10-26"; // first day shown in the calendar
+const PRE = {
+  "2026-10-31": {t:"tempo", s:"3×3K at 5'00", d:[
+    "Warm-up: 15' at "+EZ,
+    "3×3K at 5'00/km (aim for 4'58-5'02 without forcing), 2' easy jog between reps",
+    "Cool-down: 10' at 6'30/km",
+    "That is 9K at goal pace: if the third rep stays controlled, 50' is realistic. If you are gritting your teeth by the second rep, your real pace is closer to 5'05-5'10.",
+    `Alternatives: 6×1.5K at 4'58 with 1' jog (more race-like), or 4×2K at 5'00 with 90" jog (easier if your legs are tired).`]},
+  "2026-11-02": easy(40),
+  "2026-11-04": {t:"tempo", s:"Sharpener 3×1K at 4'50", d:[
+    "Warm-up: 15' at "+EZ,
+    `3×1K at 4'50/km, 90" jog between reps`,
+    "Cool-down: 10' at 6'30/km",
+    "Short and snappy, not a fitness builder. Stop if it feels hard.",
+    "Alternative: the club session, with less volume."]},
+  "2026-11-06": {t:"easy", s:`20-25' + 4×20"`, d:[
+    "20-25' easy run at "+EZ,
+    `Then 4×20" strides, fast but relaxed, 40" walk between each`]},
+  "2026-11-07": {t:"easy", s:"15' or rest", d:["Rest, or a very easy 15' shakeout"]}
+};
 
-const LABELS = {easy:"Facile", club:"Club", long:"Longue", tempo:"Tempo", test:"Test", race:"Course"};
+// Each week: [Monday, Wednesday, Friday, Saturday]
+const WEEKS = [
+  [{t:"easy", s:"30' very easy", d:["30' very easy at 6'45-7'15/km, or rest if your legs are heavy"]}, CLUB, easy(40), easy(60)],
+  [easy(45), CLUB, easy(45,1), tempo(2,10,"5'00","3'")],
+  [easy(50), CLUB, easy(45), long(80,["70' easy at "+EZ,"Last 10' at 5'20/km"])],
+  [easy(50), CLUB, easy(45,1), tempo(3,10,"4'58","2'")],
+  [easy(40), CLUB, easy(40), long(60,["60' easy at "+EZ+", no need to push the pace"])],
+  [easy(50), CLUB, easy(45,1), tempo(2,15,"4'58","2'30")],
+  [easy(50), CLUB, easy(45), long(90,["70' easy at "+EZ,"Last 20' progressing from 5'20 to 5'10/km"])],
+  [easy(45), CLUB, easy(40,1), {t:"test", s:"Test 30' at 4'52", d:["Warm-up: 15' at "+EZ,"30' continuous at 4'52/km","Cool-down: 10' at 6'30/km","Compare your average heart rate with your earlier tempo sessions."]}]
+];
+// ---------- end of editable zone ----------
+
+const LABELS = {easy:"Easy", club:"Club", long:"Long", tempo:"Tempo", test:"Test", race:"Race"};
 const KEY = "10k-training-v2";
 const pad = n => String(n).padStart(2,"0");
 const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
 const first = new Date(START+"T00:00:00");
 const END = addDays(first, WEEKS.length*7-1);
+const VIEW = new Date(VIEW_START+"T00:00:00");
 const todayISO = iso(new Date());
 
 const SESS = {};
 SESS[RACE_DATE] = RACE;
+Object.assign(SESS, PRE);
 WEEKS.forEach((w,i) => [0,2,4,5].forEach((off,j) => { SESS[iso(addDays(first, i*7+off))] = w[j]; }));
 
 let store = {s:{}, t:{}, d:{}, done:{}};
@@ -129,21 +200,21 @@ const get = k => ({
   d: store.d[k] ?? SESS[k].d.join("\n"),
   done: !!store.done[k]
 });
-const mini = (s,t) => t === "easy" ? ((s.match(/^\d+/)||[""])[0] ? (s.match(/^\d+/)[0]+"'") : "Facile") : LABELS[t];
+const mini = (s,t) => t === "easy" ? ((s.match(/^\d+/)||[""])[0] ? (s.match(/^\d+/)[0]+"'") : "Easy") : LABELS[t];
 
-const monthFmt = new Intl.DateTimeFormat("fr-FR", {month:"long", year:"numeric"});
-const longFmt = new Intl.DateTimeFormat("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+const monthFmt = new Intl.DateTimeFormat("en-GB", {month:"long", year:"numeric"});
+const longFmt = new Intl.DateTimeFormat("en-GB", {weekday:"long", day:"numeric", month:"long"});
 
 function render(){
   const cal = document.getElementById("cal");
   cal.innerHTML = "";
-  [[2026,10],[2026,11],[2027,0]].forEach(([y,m]) => {
-    const fd = new Date(y,m,1);
+  [[2026,9],[2026,10],[2026,11],[2027,0]].forEach(([y,m]) => {
+    const fd = new Date(y,m,1) < VIEW ? VIEW : new Date(y,m,1);
     const ld = new Date(y,m+1,0) < END ? new Date(y,m+1,0) : END;
-    const box = document.createElement("section"); box.className = "month";
+    const box = document.createElement("section"); box.className = "slide white";
     box.innerHTML = "<h2>"+monthFmt.format(fd)+"</h2>";
     const grid = document.createElement("div"); grid.className = "grid";
-    ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
     const lead = (fd.getDay()+6)%7;
     for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
     let count = lead;
@@ -192,13 +263,19 @@ document.getElementById("dReset").onclick = () => {
   save(); fill(); render();
 };
 document.getElementById("resetAll").onclick = () => {
-  if (confirm("Effacer toutes tes modifications et cases cochées ?")) {
+  if (confirm("Erase all your changes and checkmarks?")) {
     store = {s:{}, t:{}, d:{}, done:{}}; save(); render();
   }
 };
 
-const lg = document.getElementById("legend");
+const lg = document.getElementById("calendrier");
 Object.keys(LABELS).forEach(k => { const s = document.createElement("span"); s.className = "t-"+k; s.textContent = LABELS[k]; lg.append(s); });
+
+document.documentElement.classList.add("js");
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+}), {threshold:.15}) : null;
+document.querySelectorAll(".rise").forEach(el => io ? io.observe(el) : el.classList.add("in"));
 
 render();
 
