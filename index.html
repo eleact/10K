@@ -28,6 +28,8 @@ nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .navy a:focus-visible,.navy button:focus-visible{outline-color:#fff}
 .slide{position:relative;max-width:1100px;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
+.slide.white{max-width:1320px}
+.legend{max-width:1320px}
 .slide::before{content:"";position:absolute;inset:12px;pointer-events:none;opacity:.4;background:
  linear-gradient(currentColor,currentColor) 0 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 14px no-repeat,
  linear-gradient(currentColor,currentColor) 100% 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 14px no-repeat,
@@ -46,46 +48,77 @@ h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize
 .cols h3{margin:0;font-weight:500;font-size:.95rem;color:var(--slate)}
 .cols p{margin:6px 0 0;color:var(--slate);font-size:.92rem}
 .cols strong{display:block;font-weight:500;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.04em;margin-top:6px}
-.legend{max-width:1100px;margin:22px auto 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.legend{margin:22px auto 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .legend span{font-size:.78rem;padding:2px 11px;border-radius:999px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+
+/* Calendar */
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .wd{font-size:.75rem;color:var(--slate);text-align:center;padding-bottom:2px}
-.day{min-height:94px;border:1px solid var(--mist);border-radius:8px;padding:5px;display:flex;flex-direction:column;gap:4px}
+.day{min-height:200px;border:1px solid var(--mist);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:5px}
 .day.empty{border:0}
-.day.off{opacity:.5}
 .day.today{border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
 .num{font-size:.78rem;color:var(--slate)}
-.chip{flex:1;font:inherit;font-weight:500;font-size:.78rem;line-height:1.25;text-align:left;border:0;border-radius:6px;padding:6px 7px;cursor:pointer;color:var(--ink)}
-.chip.done::before{content:"✓ "}
+.dn{display:none}
+.chip{flex:1;display:flex;flex-direction:column;gap:9px;font:inherit;font-size:.74rem;line-height:1.3;text-align:left;border:0;border-radius:8px;padding:9px 9px 10px;cursor:pointer;color:var(--ink)}
+.chip>span{display:block}
+.chip>.top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.km{font-weight:600;font-size:1.1rem;letter-spacing:-.03em;line-height:1.1}
+.chip.done .km::before{content:"✓ "}
 .chip.done{opacity:.55}
+.ty{font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;opacity:.7}
+.chip>.blk{display:flex;flex-direction:column;gap:4px;border-top:1px solid rgba(127,127,127,.4);padding-top:6px}
+.lb{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.65}
+.tx{font-weight:500;overflow-wrap:anywhere}
+.pc{opacity:.78;font-size:.72rem;margin-top:3px}
 .t-easy{background:var(--pale)}.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.t-long{background:var(--rule)}
 .t-tempo{background:#bcd0f7}.t-test{background:var(--navy);color:#fff}.t-race{background:var(--cobalt);color:#fff}
-.mini{display:none}
+
+/* Empty day: the whole box is clickable */
+.day.blank{position:relative;cursor:pointer;transition:background .15s}
+.day.blank:hover{background:var(--pale)}
+.add{flex:1;border:0;background:transparent;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit}
+.add::after{content:"";position:absolute;inset:0;border-radius:10px}
+.add:focus-visible{outline:none}
+.add:focus-visible::after{outline:2px solid var(--cobalt);outline-offset:2px}
+.restore{position:relative;z-index:1;align-self:flex-start;font:inherit;font-size:.7rem;color:var(--slate);background:none;border:0;padding:2px;cursor:pointer;text-decoration:underline}
+
 .wordmark{font-size:clamp(3rem,13vw,9rem);font-weight:500;letter-spacing:-.06em;line-height:.9;white-space:nowrap;overflow:hidden;margin:0 0 22px}
 .foot{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;color:#b9c6d4;font-size:.9rem}
 .btn{font:inherit;font-size:.88rem;padding:8px 16px;border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;cursor:pointer}
-dialog{border:0;border-radius:20px;padding:22px;width:min(470px,94vw);background:#fff;color:var(--ink);font-family:inherit}
+dialog{border:0;border-radius:20px;padding:22px;width:min(520px,94vw);max-height:92vh;overflow:auto;background:#fff;color:var(--ink);font-family:inherit}
 dialog::backdrop{background:rgba(11,16,25,.55)}
 dialog h3{margin:0 0 14px;font-size:1.3rem;font-weight:500;letter-spacing:-.03em;text-transform:capitalize}
 dialog label{display:block;font-size:.8rem;color:var(--slate);margin-bottom:10px}
 dialog input[type=text],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--pale);color:var(--ink)}
 dialog textarea{resize:vertical;line-height:1.45}
 dialog .chk{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:.95rem}
-.row{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.part{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+.hint{font-size:.76rem;color:var(--slate);margin:-2px 0 12px}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:8px}
 dialog .btn{color:var(--ink)}
+dialog .danger{color:#b3261e}
 .js .rise{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
 .js .rise.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.js .rise{opacity:1;transform:none;transition:none}.hero h1 span{animation:none}html{scroll-behavior:auto}}
+
+/* Narrow screens and tablets: one day per row so the full practice stays readable */
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr;gap:8px}
+  .wd,.day.empty{display:none}
+  .day{min-height:0}
+  .dn{display:inline}
+  .day.blank{flex-direction:row;align-items:center;gap:10px;padding:4px 8px}
+  .day.blank .num{min-width:64px}
+  .add{min-height:30px}
+}
 @media (max-width:640px){
   main{padding:0 8px 32px}
   .slide{padding:22px 12px;border-radius:18px}
   .cols{grid-template-columns:1fr}
   .cols div{border-left:0;border-top:1px solid var(--rule);padding:14px 0}
   .cols div:first-child{border-top:0}
-  .day{min-height:56px;padding:2px}
-  .grid{gap:3px}
-  .full{display:none}.mini{display:inline}
-  .chip{padding:4px 2px;font-size:.7rem;text-align:center}
+  .two,.part{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -120,63 +153,85 @@ dialog .btn{color:var(--ink)}
 
 <dialog id="dlg">
   <h3 id="dTitle"></h3>
-  <label>Title<input type="text" id="dS"></label>
-  <label>Type<select id="dT"></select></label>
-  <label>Details<textarea id="dD" rows="7"></textarea></label>
+  <div class="two">
+    <label>Type<select id="dT" data-f="t"></select></label>
+    <label>Distance (km)<input type="text" id="dK" data-f="km" inputmode="decimal" placeholder="auto"></label>
+  </div>
+  <label>Warm-up<input type="text" data-f="wx" placeholder="e.g. 15' easy"></label>
+  <div class="part">
+    <label>Practice<textarea data-f="mx" rows="3" placeholder="e.g. 3×10' at 5'00/km · rec 3' jog"></textarea></label>
+    <label>Pace<input type="text" data-f="mp" placeholder="e.g. 6'30/km"></label>
+  </div>
+  <p class="hint">The pace is only shown for easy runs. For other types, write it in the practice text.</p>
+  <label>Cool-down<input type="text" data-f="cx" placeholder="e.g. 10' easy"></label>
+  <label>Notes<textarea data-f="n" rows="4"></textarea></label>
   <label class="chk"><input type="checkbox" id="dDone"> Done</label>
-  <div class="row"><button class="btn" id="dReset">Reset this session</button><button class="btn" id="dClose">Close</button></div>
+  <div class="row">
+    <button class="btn danger" id="dRemove">Remove practice</button>
+    <button class="btn" id="dReset">Reset this day</button>
+    <button class="btn" id="dClose">Close</button>
+  </div>
 </dialog>
 
 <script>
 // ---------- PLAN: edit here ----------
 const START = "2026-11-09"; // first Monday of the plan
 const EZ = "6'15-6'45/km";  // easy pace
-const easy = (m, st) => ({t:"easy", s:m+"' easy"+(st?' + 4×20"':''),
-  d:[m+"' easy run at "+EZ+", max heart rate 155"].concat(st?['Then 4×20" strides, fast but relaxed, 40" walk between each']:[])});
-const tempo = (n,m,p,r) => ({t:"tempo", s:"Tempo "+n+"×"+m+"' at "+p,
-  d:["Warm-up: 15' at "+EZ, n+"×"+m+"' at "+p+"/km", "Recovery: "+r+" slow jog (7'00/km or slower) between reps", "Cool-down: 10' at 6'30/km"]});
-const long = (tot, lines) => ({t:"long", s:"Long "+tot+"'", d:lines});
-const CLUB = {t:"club", s:"Club", d:["Club"]};
-const RACE = {t:"race", s:"10K race", d:["10K race. Goal: 50' (5'00/km).","Km 1 at 5'03-5'05, km 2 to 7 at 5'00, then give what you have left from km 8."]};
+
+// Practice model: t = type, km = fixed distance (empty = estimated),
+// wx = warm-up, mx/mp = practice text/pace (pace shown for easy runs only), cx = cool-down, n = notes.
+// Tip for the distance estimate: write reps like "3×10' at 5'00/km · rec 3' jog" or "3×3K at 5'00/km · rec 2' jog".
+const S = (t, o) => Object.assign({t, km:"", wx:"", mx:"", mp:"", cx:"", n:""}, o);
+const easy = (m, st) => S("easy", {
+  mx: m+"' easy"+(st?'\n+ 4×20" strides, 40" walk between':''), mp: EZ, n: "Max heart rate 155"});
+const tempo = (n,m,p,r) => S("tempo", {
+  wx:"15' easy",
+  mx:n+"×"+m+"' at "+p+"/km · rec "+r+" jog",
+  cx:"10' easy",
+  n:"Recovery jog at 7'00/km or slower."});
+const long = (x, n) => S("long", {mx:x, n:n||""});
+const CLUB = () => S("club", {});
+const RACE = S("race", {
+  mx:"10K at 5'00/km",
+  n:"Goal: 50' (5'00/km).\nKm 1 at 5'03-5'05, km 2 to 7 at 5'00, then give what you have left from km 8."});
 const RACE_DATE = "2026-11-08";
 
 // Final race preparation
-const VIEW_START = "2026-10-26"; // first day shown in the calendar
+const VIEW_START = "2026-10-23"; // first day shown in the calendar
 const PRE = {
-  "2026-10-31": {t:"tempo", s:"3×3K at 5'00", d:[
-    "Warm-up: 15' at "+EZ,
-    "3×3K at 5'00/km (aim for 4'58-5'02 without forcing), 2' easy jog between reps",
-    "Cool-down: 10' at 6'30/km",
-    "That is 9K at goal pace: if the third rep stays controlled, 50' is realistic. If you are gritting your teeth by the second rep, your real pace is closer to 5'05-5'10.",
-    `Alternatives: 6×1.5K at 4'58 with 1' jog (more race-like), or 4×2K at 5'00 with 90" jog (easier if your legs are tired).`]},
+  "2026-10-31": S("tempo", {
+    wx:"15' easy",
+    mx:"3×3K at 5'00/km · rec 2' jog",
+    cx:"10' easy",
+    n:"Aim for 4'58-5'02 without forcing.\nThat is 9K at goal pace: if the third rep stays controlled, 50' is realistic. If you are gritting your teeth by the second rep, your real pace is closer to 5'05-5'10.\nAlternatives: 6×1.5K at 4'58 with 1' jog (more race-like), or 4×2K at 5'00 with 90\" jog (easier if your legs are tired)."}),
   "2026-11-02": easy(40),
-  "2026-11-04": {t:"tempo", s:"Sharpener 3×1K at 4'50", d:[
-    "Warm-up: 15' at "+EZ,
-    `3×1K at 4'50/km, 90" jog between reps`,
-    "Cool-down: 10' at 6'30/km",
-    "Short and snappy, not a fitness builder. Stop if it feels hard.",
-    "Alternative: the club session, with less volume."]},
-  "2026-11-06": {t:"easy", s:`20-25' + 4×20"`, d:[
-    "20-25' easy run at "+EZ,
-    `Then 4×20" strides, fast but relaxed, 40" walk between each`]},
-  "2026-11-07": {t:"easy", s:"15' or rest", d:["Rest, or a very easy 15' shakeout"]}
+  "2026-11-04": S("tempo", {
+    wx:"15' easy",
+    mx:`3×1K at 4'50/km · rec 90" jog`,
+    cx:"10' easy",
+    n:"Short and snappy, not a fitness builder. Stop if it feels hard.\nAlternative: the club practice, with less volume."}),
+  "2026-11-06": S("easy", {
+    mx:`20-25' easy\n+ 4×20" strides, 40" walk between`, mp:EZ}),
+  "2026-11-07": S("easy", {mx:"15' very easy shakeout, or rest", mp:"7'00/km"})
 };
 
 // Each week: [Monday, Wednesday, Friday, Saturday]
 const WEEKS = [
-  [{t:"easy", s:"30' very easy", d:["30' very easy at 6'45-7'15/km, or rest if your legs are heavy"]}, CLUB, easy(40), easy(60)],
-  [easy(45), CLUB, easy(45,1), tempo(2,10,"5'00","3'")],
-  [easy(50), CLUB, easy(45), long(80,["70' easy at "+EZ,"Last 10' at 5'20/km"])],
-  [easy(50), CLUB, easy(45,1), tempo(3,10,"4'58","2'")],
-  [easy(40), CLUB, easy(40), long(60,["60' easy at "+EZ+", no need to push the pace"])],
-  [easy(50), CLUB, easy(45,1), tempo(2,15,"4'58","2'30")],
-  [easy(50), CLUB, easy(45), long(90,["70' easy at "+EZ,"Last 20' progressing from 5'20 to 5'10/km"])],
-  [easy(45), CLUB, easy(40,1), {t:"test", s:"Test 30' at 4'52", d:["Warm-up: 15' at "+EZ,"30' continuous at 4'52/km","Cool-down: 10' at 6'30/km","Compare your average heart rate with your earlier tempo sessions."]}]
+  [S("easy",{mx:"30' very easy", mp:"6'45-7'15/km", n:"Or rest if your legs are heavy."}), CLUB(), easy(40), easy(60)],
+  [easy(45), CLUB(), easy(45,1), tempo(2,10,"5'00","3'")],
+  [easy(50), CLUB(), easy(45), long("70' easy\n+ 10' at 5'20/km")],
+  [easy(50), CLUB(), easy(45,1), tempo(3,10,"4'58","2'")],
+  [easy(40), CLUB(), easy(40), long("60' easy","No need to push the pace.")],
+  [easy(50), CLUB(), easy(45,1), tempo(2,15,"4'58","2'30")],
+  [easy(50), CLUB(), easy(45), long("70' easy\n+ 20' from 5'20 to 5'10/km")],
+  [easy(45), CLUB(), easy(40,1), S("test",{
+    wx:"15' easy", mx:"30' at 4'52/km, continuous", cx:"10' easy",
+    n:"Compare your average heart rate with your earlier tempo sessions."})]
 ];
 // ---------- end of editable zone ----------
 
 const LABELS = {easy:"Easy", club:"Club", long:"Long", tempo:"Tempo", test:"Test", race:"Race"};
-const KEY = "10k-training-v2";
+const KEY = "10k-training-v3";
 const pad = n => String(n).padStart(2,"0");
 const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
@@ -184,26 +239,85 @@ const first = new Date(START+"T00:00:00");
 const END = addDays(first, WEEKS.length*7-1);
 const VIEW = new Date(VIEW_START+"T00:00:00");
 const todayISO = iso(new Date());
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 const SESS = {};
 SESS[RACE_DATE] = RACE;
 Object.assign(SESS, PRE);
 WEEKS.forEach((w,i) => [0,2,4,5].forEach((off,j) => { SESS[iso(addDays(first, i*7+off))] = w[j]; }));
 
-let store = {s:{}, t:{}, d:{}, done:{}};
-try { store = Object.assign(store, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+// store.o = edited or added practices, store.rm = removed days, store.done = checkmarks
+let store = {o:{}, rm:{}, done:{}};
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) store = Object.assign(store, JSON.parse(raw));
+  else { // keep checkmarks from the previous version
+    const old = JSON.parse(localStorage.getItem("10k-training-v2") || "{}");
+    if (old.done) store.done = old.done;
+  }
+} catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
 
-const get = k => ({
-  s: store.s[k] ?? SESS[k].s,
-  t: store.t[k] ?? SESS[k].t,
-  d: store.d[k] ?? SESS[k].d.join("\n"),
-  done: !!store.done[k]
-});
-const mini = (s,t) => t === "easy" ? ((s.match(/^\d+/)||[""])[0] ? (s.match(/^\d+/)[0]+"'") : "Easy") : LABELS[t];
+const BLANK = S("easy", {});
+const getS = k => {
+  if (store.rm[k]) return null;
+  const s = store.o[k] || SESS[k];
+  return s ? Object.assign({}, BLANK, s) : null;
+};
+
+// ---------- distance estimate ----------
+const secs = s => {
+  const m = String(s||"").match(/\d+'\d{2}/g);
+  if (!m) return 0;
+  return m.reduce((a,x) => { const [mm,ss] = x.split("'"); return a + (+mm)*60 + (+ss); }, 0) / m.length;
+};
+const recSecs = t => {
+  const m = String(t).match(/rec\s*(\d+)(['"])(\d+)?/i);
+  return m ? (m[2] === "'" ? (+m[1])*60 + (+m[3]||0) : +m[1]) : 0;
+};
+const num = x => parseFloat(String(x).replace(",","."));
+function estLine(line, defP){
+  const rec = recSecs(line);
+  const l = line.replace(/rec[^·\n]*/i, "");
+  const p = secs(l) || defP;
+  let m;
+  if ((m = l.match(/(\d+)\s*×\s*(\d+(?:[.,]\d+)?)\s*K/i))) return (+m[1])*num(m[2]) + (+m[1]-1)*rec/420;
+  if (!p) return 0;
+  if ((m = l.match(/(\d+)\s*×\s*(\d+)\s*'/))) return (+m[1])*(+m[2])*60/p + (+m[1]-1)*rec/420;
+  if ((m = l.match(/(\d+(?:[.,]\d+)?)\s*K\b/i))) return num(m[1]);
+  if ((m = l.match(/(\d+)\s*'/))) return (+m[1])*60/p;
+  return 0;
+}
+function estParts(g){
+  const ez = secs(EZ);
+  return [["wx",ez],["mx",secs(g.mp)||ez],["cx",ez]].reduce((a,[x,p]) =>
+    a + String(g[x]||"").split("\n").reduce((b,line) => b + estLine(line, p), 0), 0);
+}
+function kmInfo(g){
+  const o = num(g.km);
+  if (!isNaN(o) && o > 0) return {v:o, auto:false};
+  return {v:Math.round(estParts(g)*2)/2, auto:true};
+}
+const fmtKm = i => i.v > 0 ? (i.auto?"≈ ":"")+(Number.isInteger(i.v)?i.v:i.v.toFixed(1))+" km" : "";
+
+// ---------- rendering ----------
+const fmtPace = p => !p ? "" : (p.includes("/") ? p : p+"/km");
+const block = (label, x, p) => (!x && !p) ? "" :
+  '<span class="blk">'+(label ? '<span class="lb">'+label+'</span>' : '')+
+  (x ? '<span class="tx">'+esc(x).replace(/\n/g,"<br>")+'</span>' : '')+
+  (p ? '<span class="pc">'+esc(fmtPace(p))+'</span>' : '')+'</span>';
+
+function chipHTML(g){
+  const km = fmtKm(kmInfo(g));
+  return '<span class="top"><b class="km">'+(km || "&nbsp;")+'</b><span class="ty">'+esc(LABELS[g.t]||"")+'</span></span>'+
+    block("Warm-up", g.wx, "")+
+    block("", g.mx, g.t === "easy" ? g.mp : "")+
+    block("Cool-down", g.cx, "");
+}
 
 const monthFmt = new Intl.DateTimeFormat("en-GB", {month:"long", year:"numeric"});
 const longFmt = new Intl.DateTimeFormat("en-GB", {weekday:"long", day:"numeric", month:"long"});
+const WD = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
 function render(){
   const cal = document.getElementById("cal");
@@ -214,22 +328,32 @@ function render(){
     const box = document.createElement("section"); box.className = "slide white";
     box.innerHTML = "<h2>"+monthFmt.format(fd)+"</h2>";
     const grid = document.createElement("div"); grid.className = "grid";
-    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
+    WD.forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
     const lead = (fd.getDay()+6)%7;
     for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
     let count = lead;
     for (let d=new Date(fd); d<=ld; d=addDays(d,1)){
-      const k = iso(d), cell = document.createElement("div");
-      cell.className = "day"+(SESS[k]?"":" off")+(k===todayISO?" today":"");
-      cell.innerHTML = '<span class="num">'+d.getDate()+'</span>';
-      if (SESS[k]){
-        const g = get(k), b = document.createElement("button");
-        b.className = "chip t-"+g.t+(g.done?" done":""); b.type = "button";
-        b.innerHTML = '<span class="full"></span><span class="mini"></span>';
-        b.querySelector(".full").textContent = g.s;
-        b.querySelector(".mini").textContent = mini(g.s, g.t);
+      const k = iso(d), g = getS(k), cell = document.createElement("div");
+      cell.className = "day"+(g?"":" blank")+(k===todayISO?" today":"");
+      cell.innerHTML = '<span class="num"><span class="dn">'+WD[(d.getDay()+6)%7]+' </span>'+d.getDate()+'</span>';
+      if (g){
+        const b = document.createElement("button");
+        b.className = "chip t-"+g.t+(store.done[k]?" done":""); b.type = "button";
+        b.innerHTML = chipHTML(g);
         b.onclick = () => openDay(k);
         cell.append(b);
+      } else {
+        const a = document.createElement("button");
+        a.className = "add"; a.type = "button";
+        a.setAttribute("aria-label","Add a practice on "+longFmt.format(d));
+        a.onclick = () => addPractice(k);
+        cell.append(a);
+        if (store.rm[k] && SESS[k]){
+          const r = document.createElement("button");
+          r.className = "restore"; r.type = "button"; r.textContent = "↺ Restore planned practice";
+          r.onclick = e => { e.stopPropagation(); delete store.rm[k]; save(); render(); };
+          cell.append(r);
+        }
       }
       grid.append(cell); count++;
     }
@@ -238,33 +362,56 @@ function render(){
   });
 }
 
+// ---------- dialog ----------
 const dlg = document.getElementById("dlg");
-const dS = document.getElementById("dS"), dT = document.getElementById("dT"), dD = document.getElementById("dD"), dDone = document.getElementById("dDone");
+const dT = document.getElementById("dT"), dK = document.getElementById("dK"), dDone = document.getElementById("dDone");
+const fields = dlg.querySelectorAll("[data-f]");
 let cur = null;
 Object.keys(LABELS).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = LABELS[k]; dT.append(o); });
 
+function hint(){
+  const g = getS(cur); if (!g) return;
+  const e = fmtKm({v:Math.round(estParts(g)*2)/2, auto:true});
+  dK.placeholder = e ? "auto: "+e : "auto";
+}
 function fill(){
-  const g = get(cur);
-  dS.value = g.s; dT.value = g.t; dD.value = g.d; dDone.checked = g.done;
+  const g = getS(cur); if (!g) return;
+  fields.forEach(el => { el.value = g[el.dataset.f] ?? ""; });
+  dDone.checked = !!store.done[cur];
+  hint();
 }
 function openDay(k){
   cur = k;
   document.getElementById("dTitle").textContent = longFmt.format(new Date(k+"T00:00:00"));
   fill(); dlg.showModal();
 }
-dS.oninput = () => { store.s[cur] = dS.value; save(); render(); };
-dT.onchange = () => { store.t[cur] = dT.value; save(); render(); };
-dD.oninput = () => { store.d[cur] = dD.value; save(); };
+function addPractice(k){
+  delete store.rm[k];
+  store.o[k] = Object.assign({}, BLANK);
+  save(); render(); openDay(k);
+}
+fields.forEach(el => el.addEventListener("input", () => {
+  const g = getS(cur); if (!g) return;
+  store.o[cur] = Object.assign({}, g, {[el.dataset.f]: el.value});
+  save(); hint(); render();
+}));
 dDone.onchange = () => { store.done[cur] = dDone.checked; save(); render(); };
 document.getElementById("dClose").onclick = () => dlg.close();
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+document.getElementById("dRemove").onclick = () => {
+  if (!confirm("Remove this practice?")) return;
+  delete store.o[cur]; delete store.done[cur]; store.rm[cur] = true;
+  save(); dlg.close(); render();
+};
 document.getElementById("dReset").onclick = () => {
-  ["s","t","d","done"].forEach(f => delete store[f][cur]);
-  save(); fill(); render();
+  delete store.o[cur]; delete store.rm[cur]; delete store.done[cur];
+  save();
+  if (SESS[cur]) fill(); else dlg.close();
+  render();
 };
 document.getElementById("resetAll").onclick = () => {
-  if (confirm("Erase all your changes and checkmarks?")) {
-    store = {s:{}, t:{}, d:{}, done:{}}; save(); render();
+  if (confirm("Erase all your changes, added practices and checkmarks?")) {
+    store = {o:{}, rm:{}, done:{}}; save(); render();
   }
 };
 
