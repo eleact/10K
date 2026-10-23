@@ -3,144 +3,203 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plan d'entraînement après le 10K</title>
+<title>10K training</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1f3a5f">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Plan 10K">
+<meta name="apple-mobile-web-app-title" content="10K training">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
-  --bg:#f4f6f8; --card:#ffffff; --text:#18222d; --muted:#667280; --line:#dde2e7; --accent:#1f3a5f;
-  --easy:#e0f0e2; --club:#d9e8f8; --long:#e7ddf4; --tempo:#fde3c8; --test:#f7d5d1;
+  --bg:#f1f4f7; --card:#fff; --text:#17212b; --muted:#6a7683; --line:#e0e5ea; --accent:#1f3a5f;
+  --easy:#d9eedc; --club:#d3e5f8; --long:#e4d8f4; --tempo:#fcdcb8; --test:#f6cdc8; --race:#1f3a5f; --race-fg:#fff;
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --bg:#12171c; --card:#1b222a; --text:#e7ebef; --muted:#97a2ae; --line:#2b343d; --accent:#9dbfee;
-    --easy:#1e3324; --club:#1d2f46; --long:#2d2540; --tempo:#463320; --test:#4a2522;
+    --bg:#10151a; --card:#1a2128; --text:#e8ecf0; --muted:#97a2ae; --line:#2a333c; --accent:#9dbfee;
+    --easy:#21392a; --club:#1f3550; --long:#33294a; --tempo:#523a20; --test:#552a26; --race:#9dbfee; --race-fg:#10151a;
   }
 }
 *{box-sizing:border-box}
-html{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
-main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
-h1{font-size:1.7rem;line-height:1.2;margin:0 0 4px;color:var(--accent)}
-.sub{margin:0 0 16px;color:var(--muted)}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px}
-.bar button{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;cursor:pointer}
-.bar button:focus-visible,.tag:focus-visible,.txt:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.hint{color:var(--muted);font-size:.85rem;margin:0 0 20px}
-.week{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:14px}
-.week.now{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.week h2{font-size:1rem;margin:0 0 10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.week h2 span{color:var(--muted);font-weight:400}
-.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.cell{border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:110px}
-.cell.easy{background:var(--easy)} .cell.club{background:var(--club)} .cell.long{background:var(--long)}
-.cell.tempo{background:var(--tempo)} .cell.test{background:var(--test)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
-.top label{display:flex;align-items:center;gap:4px;cursor:pointer}
-.tag{font:inherit;font-size:.75rem;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:1px 8px;cursor:pointer}
-.txt{flex:1;font-size:.92rem;border-radius:4px;padding:2px}
-.cell.done .txt{text-decoration:line-through;opacity:.55}
-@media (max-width:760px){.days{grid-template-columns:1fr}.cell{min-height:0}}
-@media print{.bar,.hint{display:none}body{background:#fff;color:#000}.week{break-inside:avoid}}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:28px 14px 56px}
+h1{font-size:2.4rem;line-height:1;margin:0;letter-spacing:-.02em;color:var(--accent)}
+.sub{margin:6px 0 18px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.legend span{font-size:.78rem;padding:2px 10px;border-radius:10px}
+.month{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px}
+.month h2{margin:0 0 10px;font-size:1.15rem;text-transform:capitalize}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{font-size:.75rem;color:var(--muted);text-align:center;padding-bottom:2px}
+.day{min-height:92px;border:1px solid var(--line);border-radius:6px;padding:4px;display:flex;flex-direction:column;gap:4px}
+.day.empty{border:0}
+.day.off{background:transparent;opacity:.55}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.num{font-size:.78rem;color:var(--muted)}
+.chip{flex:1;font:inherit;text-align:left;border:0;border-radius:5px;padding:5px 6px;cursor:pointer;color:var(--text);font-size:.78rem;font-weight:600;line-height:1.25}
+.chip:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip.done::before{content:"✓ "}
+.chip.done{opacity:.6}
+.t-easy{background:var(--easy)} .t-club{background:var(--club)} .t-long{background:var(--long)}
+.t-tempo{background:var(--tempo)} .t-test{background:var(--test)} .t-race{background:var(--race);color:var(--race-fg)}
+.mini{display:none}
+.tools{margin-top:8px}
+.btn{font:inherit;font-size:.88rem;padding:6px 12px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;cursor:pointer}
+dialog{border:0;border-radius:12px;padding:18px;width:min(460px,94vw);background:var(--card);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 12px;font-size:1.1rem;text-transform:capitalize}
+dialog label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:10px}
+dialog input[type=text],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text)}
+dialog textarea{resize:vertical;line-height:1.45}
+dialog .chk{display:flex;align-items:center;gap:8px;color:var(--text);font-size:.95rem}
+.row{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+@media (max-width:640px){
+  main{padding:20px 8px 40px}
+  .month{padding:10px 6px}
+  .day{min-height:56px;padding:2px}
+  .full{display:none} .mini{display:inline}
+  .chip{padding:3px;font-size:.72rem;text-align:center}
+}
 </style>
 </head>
 <body>
 <main>
-  <h1>Plan d'entraînement après le 10K</h1>
-  <p class="sub">Du 9 novembre 2026 au 3 janvier 2027. Objectif : être de plus en plus à l'aise à 5'/km.</p>
-  <div class="bar">
-    <button id="print">Imprimer ou enregistrer en PDF</button>
-    <button id="reset">Rétablir le plan d'origine</button>
-  </div>
-  <p class="hint">Clique sur un texte pour le modifier, sur l'étiquette pour changer le type de séance, et coche les séances faites. Tout est enregistré dans ton navigateur. Pour changer le plan pour tout le monde, modifie la liste PLAN en bas de ce fichier.</p>
-  <div id="plan"></div>
+  <h1>10K training</h1>
+  <p class="sub">9 novembre 2026 au 3 janvier 2027. Objectif : être de plus en plus à l'aise à 5'/km. Touche une séance pour voir le détail et la modifier.</p>
+  <div class="legend" id="legend"></div>
+  <div id="cal"></div>
+  <div class="tools"><button class="btn" id="resetAll">Tout rétablir</button></div>
 </main>
 
+<dialog id="dlg">
+  <h3 id="dTitle"></h3>
+  <label>Titre<input type="text" id="dS"></label>
+  <label>Type<select id="dT"></select></label>
+  <label>Détail de la séance<textarea id="dD" rows="7"></textarea></label>
+  <label class="chk"><input type="checkbox" id="dDone"> Séance faite</label>
+  <div class="row"><button class="btn" id="dReset">Rétablir cette séance</button><button class="btn" id="dClose">Fermer</button></div>
+</dialog>
+
 <script>
-// ---- À MODIFIER : date du premier lundi et séances ----
-const START = "2026-11-09";
-const CLUB = "Séance du club (suivre la séance prévue)";
-// Types : easy (facile), club, long (longue), tempo, test
-const PLAN = [
-  {name:"Récup", days:[["easy","Repos ou 30' très facile"],["club","Club (en endurance si jambes lourdes)"],["easy","40' facile"],["easy","60' facile"]]},
-  {name:"Build", days:[["easy","45' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 2x10' à 5'00/km (récup 3'), 10' retour au calme"]]},
-  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile"],["long","80' facile, derniers 10' à 5'20/km"]]},
-  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 3x10' à 4'58/km (récup 2'), 10' retour au calme"]]},
-  {name:"Allégée", days:[["easy","40' facile"],["club",CLUB],["easy","40' facile"],["long","60' facile"]]},
-  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile + 4x20\" lignes droites"],["tempo","15' échauffement, 2x15' à 4'58/km (récup 2'30), 10' retour au calme"]]},
-  {name:"Build", days:[["easy","50' facile"],["club",CLUB],["easy","45' facile"],["long","90' facile, derniers 20' progressifs de 5'20 à 5'10/km"]]},
-  {name:"Test", days:[["easy","45' facile"],["club",CLUB],["easy","40' facile + 4x20\" lignes droites"],["test","15' échauffement, 30' continu à 4'52/km, 10' retour au calme"]]}
+// ---------- PLAN : à modifier ici ----------
+const START = "2026-11-09"; // premier lundi du plan
+const EZ = "6'15-6'45/km";  // allure facile
+const easy = (m, st) => ({t:"easy", s:m+"' facile"+(st?' + 4×20"':''),
+  d:[m+"' footing facile à "+EZ+", pouls max 155"].concat(st?['Ensuite 4×20" lignes droites rapides mais relâchées, 40" de marche entre chaque']:[])});
+const tempo = (n,m,p,r) => ({t:"tempo", s:"Tempo "+n+"×"+m+"' à "+p,
+  d:["Échauffement : 15' à "+EZ, n+"×"+m+"' à "+p+"/km", "Récup : "+r+" de trot lent (7'00/km ou plus) entre les blocs", "Retour au calme : 10' à 6'30/km"]});
+const long = (tot, lines) => ({t:"long", s:"Longue "+tot+"'", d:lines});
+const CLUB = {t:"club", s:"Club", d:["Club"]};
+const RACE = {t:"race", s:"Course 10K", d:["Course 10K. Objectif 50' (5'00/km).","Km 1 à 5'03-5'05, km 2 à 7 à 5'00, puis donne tout ce qu'il reste à partir du km 8."]};
+const RACE_DATE = "2026-11-08";
+
+// Chaque semaine : [lundi, mercredi, vendredi, samedi]
+const WEEKS = [
+  [{t:"easy", s:"30' très facile", d:["30' très facile à 6'45-7'15/km, ou repos si les jambes sont lourdes"]}, CLUB, easy(40), easy(60)],
+  [easy(45), CLUB, easy(45,1), tempo(2,10,"5'00","3'")],
+  [easy(50), CLUB, easy(45), long(80,["70' facile à "+EZ,"Derniers 10' à 5'20/km"])],
+  [easy(50), CLUB, easy(45,1), tempo(3,10,"4'58","2'")],
+  [easy(40), CLUB, easy(40), long(60,["60' facile à "+EZ+", sans chercher la vitesse"])],
+  [easy(50), CLUB, easy(45,1), tempo(2,15,"4'58","2'30")],
+  [easy(50), CLUB, easy(45), long(90,["70' facile à "+EZ,"Derniers 20' progressifs de 5'20 à 5'10/km"])],
+  [easy(45), CLUB, easy(40,1), {t:"test", s:"Test 30' à 4'52", d:["Échauffement : 15' à "+EZ,"30' continu à 4'52/km","Retour au calme : 10' à 6'30/km","Compare ton pouls moyen avec celui de tes séances tempo précédentes."]}]
 ];
-// ---- Fin de la zone à modifier ----
+// ---------- fin de la zone à modifier ----------
 
-const DAYS = [["Lundi",0],["Mercredi",2],["Vendredi",4],["Samedi",5]];
-const LABELS = {easy:"Facile", club:"Club", long:"Longue", tempo:"Tempo", test:"Test"};
-const TYPES = Object.keys(LABELS);
-const KEY = "plan10k-v1";
-
-let store = {text:{}, done:{}, type:{}};
-try { store = Object.assign(store, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} }
-
-const fmt = new Intl.DateTimeFormat("fr-FR", {day:"numeric", month:"short"});
-const first = new Date(START + "T00:00:00");
+const LABELS = {easy:"Facile", club:"Club", long:"Longue", tempo:"Tempo", test:"Test", race:"Course"};
+const KEY = "10k-training-v2";
+const pad = n => String(n).padStart(2,"0");
+const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
-const today = new Date(); today.setHours(0,0,0,0);
+const first = new Date(START+"T00:00:00");
+const END = addDays(first, WEEKS.length*7-1);
+const todayISO = iso(new Date());
+
+const SESS = {};
+SESS[RACE_DATE] = RACE;
+WEEKS.forEach((w,i) => [0,2,4,5].forEach((off,j) => { SESS[iso(addDays(first, i*7+off))] = w[j]; }));
+
+let store = {s:{}, t:{}, d:{}, done:{}};
+try { store = Object.assign(store, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
+
+const get = k => ({
+  s: store.s[k] ?? SESS[k].s,
+  t: store.t[k] ?? SESS[k].t,
+  d: store.d[k] ?? SESS[k].d.join("\n"),
+  done: !!store.done[k]
+});
+const mini = (s,t) => t === "easy" ? ((s.match(/^\d+/)||[""])[0] ? (s.match(/^\d+/)[0]+"'") : "Facile") : LABELS[t];
+
+const monthFmt = new Intl.DateTimeFormat("fr-FR", {month:"long", year:"numeric"});
+const longFmt = new Intl.DateTimeFormat("fr-FR", {weekday:"long", day:"numeric", month:"long"});
 
 function render(){
-  const root = document.getElementById("plan");
-  root.innerHTML = "";
-  PLAN.forEach((w,i) => {
-    const mon = addDays(first, i*7), sun = addDays(mon, 6);
-    const sec = document.createElement("section");
-    sec.className = "week" + (today >= mon && today <= sun ? " now" : "");
-    sec.innerHTML = `<h2>Semaine ${i+1} : ${w.name}<span>${fmt.format(mon)} au ${fmt.format(sun)}</span></h2>`;
-    const grid = document.createElement("div"); grid.className = "days";
-    w.days.forEach((d,j) => {
-      const id = i + "-" + j;
-      const type = store.type[id] || d[0];
-      const cell = document.createElement("div");
-      cell.className = "cell " + type + (store.done[id] ? " done" : "");
-
-      const top = document.createElement("div"); top.className = "top";
-      const date = document.createElement("span");
-      date.textContent = DAYS[j][0] + " " + fmt.format(addDays(mon, DAYS[j][1]));
-      const tag = document.createElement("button"); tag.className = "tag"; tag.type = "button";
-      tag.textContent = LABELS[type]; tag.title = "Changer le type de séance";
-      tag.onclick = () => {
-        const cur = store.type[id] || d[0];
-        store.type[id] = TYPES[(TYPES.indexOf(cur)+1) % TYPES.length];
-        save(); render();
-      };
-      top.append(date, tag);
-
-      const txt = document.createElement("div"); txt.className = "txt";
-      txt.contentEditable = "true"; txt.spellcheck = false;
-      txt.textContent = store.text[id] ?? d[1];
-      txt.oninput = () => { store.text[id] = txt.textContent; save(); };
-
-      const lab = document.createElement("label");
-      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!store.done[id];
-      cb.onchange = () => { store.done[id] = cb.checked; cell.classList.toggle("done", cb.checked); save(); };
-      lab.append(cb, document.createTextNode("Faite"));
-
-      cell.append(top, txt, lab);
-      grid.append(cell);
-    });
-    sec.append(grid);
-    root.append(sec);
+  const cal = document.getElementById("cal");
+  cal.innerHTML = "";
+  [[2026,10],[2026,11],[2027,0]].forEach(([y,m]) => {
+    const fd = new Date(y,m,1);
+    const ld = new Date(y,m+1,0) < END ? new Date(y,m+1,0) : END;
+    const box = document.createElement("section"); box.className = "month";
+    box.innerHTML = "<h2>"+monthFmt.format(fd)+"</h2>";
+    const grid = document.createElement("div"); grid.className = "grid";
+    ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(n => { const h = document.createElement("div"); h.className = "wd"; h.textContent = n; grid.append(h); });
+    const lead = (fd.getDay()+6)%7;
+    for (let i=0;i<lead;i++){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); }
+    let count = lead;
+    for (let d=new Date(fd); d<=ld; d=addDays(d,1)){
+      const k = iso(d), cell = document.createElement("div");
+      cell.className = "day"+(SESS[k]?"":" off")+(k===todayISO?" today":"");
+      cell.innerHTML = '<span class="num">'+d.getDate()+'</span>';
+      if (SESS[k]){
+        const g = get(k), b = document.createElement("button");
+        b.className = "chip t-"+g.t+(g.done?" done":""); b.type = "button";
+        b.innerHTML = '<span class="full"></span><span class="mini"></span>';
+        b.querySelector(".full").textContent = g.s;
+        b.querySelector(".mini").textContent = mini(g.s, g.t);
+        b.onclick = () => openDay(k);
+        cell.append(b);
+      }
+      grid.append(cell); count++;
+    }
+    while (count % 7){ const e = document.createElement("div"); e.className = "day empty"; grid.append(e); count++; }
+    box.append(grid); cal.append(box);
   });
 }
 
-document.getElementById("print").onclick = () => window.print();
-document.getElementById("reset").onclick = () => {
+const dlg = document.getElementById("dlg");
+const dS = document.getElementById("dS"), dT = document.getElementById("dT"), dD = document.getElementById("dD"), dDone = document.getElementById("dDone");
+let cur = null;
+Object.keys(LABELS).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = LABELS[k]; dT.append(o); });
+
+function fill(){
+  const g = get(cur);
+  dS.value = g.s; dT.value = g.t; dD.value = g.d; dDone.checked = g.done;
+}
+function openDay(k){
+  cur = k;
+  document.getElementById("dTitle").textContent = longFmt.format(new Date(k+"T00:00:00"));
+  fill(); dlg.showModal();
+}
+dS.oninput = () => { store.s[cur] = dS.value; save(); render(); };
+dT.onchange = () => { store.t[cur] = dT.value; save(); render(); };
+dD.oninput = () => { store.d[cur] = dD.value; save(); };
+dDone.onchange = () => { store.done[cur] = dDone.checked; save(); render(); };
+document.getElementById("dClose").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+document.getElementById("dReset").onclick = () => {
+  ["s","t","d","done"].forEach(f => delete store[f][cur]);
+  save(); fill(); render();
+};
+document.getElementById("resetAll").onclick = () => {
   if (confirm("Effacer toutes tes modifications et cases cochées ?")) {
-    store = {text:{}, done:{}, type:{}}; save(); render();
+    store = {s:{}, t:{}, d:{}, done:{}}; save(); render();
   }
 };
+
+const lg = document.getElementById("legend");
+Object.keys(LABELS).forEach(k => { const s = document.createElement("span"); s.className = "t-"+k; s.textContent = LABELS[k]; lg.append(s); });
+
 render();
 
 if ("serviceWorker" in navigator) {
