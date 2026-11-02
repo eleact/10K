@@ -48,5 +48,102 @@ Object.assign(DEFAULT_PACES, NP);
 const sp = store.paces;
 if (sp && sp.easySec === 390 && sp.tempoSec === 300 && sp.testSec === 292) { Object.assign(sp, NP); save(); }
 
+// ===== Layout tweaks: week header on top, no empty day boxes, "Done" checkbox, plain background =====
+const css = document.createElement("style");
+css.textContent = `
+body::before{display:none}
+.wkbox{margin:0 0 18px}
+.wkbox .wk{border-bottom:0;padding:4px 0 10px;align-items:center}
+.wdays{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px}
+.wdays .day{min-height:170px}
+.wdays .num{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--ink)}
+.ck{display:flex;align-items:center;gap:5px;font-size:.74rem;font-weight:400;color:var(--slate);cursor:pointer}
+.ck input{width:20px;height:20px;margin:0;accent-color:#16834a;cursor:pointer}
+.addsel{margin-left:auto;font:inherit;font-size:.78rem;border:1px solid var(--rule);border-radius:999px;background:#fff;color:var(--ink);padding:3px 8px;cursor:pointer}
+`;
+document.head.append(css);
+
+function sessCell(d, evMap) {
+  const k = iso(d), g = getS(k), cell = document.createElement("div");
+  cell.id = "d-" + k;
+  cell.className = "day" + (k === todayISO ? " today" : "");
+  cell.innerHTML = '<span class="num"><span>' + WD[(d.getDay() + 6) % 7] + " " + d.getDate() + "</span>" +
+    '<label class="ck"><input type="checkbox"' + (store.done[k] ? " checked" : "") + ' aria-label="Mark as completed"> Done</label></span>' +
+    (evMap[k] || []).map(e => '<span class="evt">' + esc(e.name || "Event") + " · " + (TYPES[e.type] || "Other") + "</span>").join("");
+  cell.querySelector("input").onchange = e => { store.done[k] = e.target.checked; save(); render(); };
+  const b = document.createElement("button");
+  b.className = "chip t-" + g.t + (store.done[k] ? " done" : ""); b.type = "button";
+  b.innerHTML = chipHTML(g, k);
+  b.onclick = () => openDay(k);
+  cell.append(b);
+  return cell;
+}
+
+// "+ Add practice" menu in the week header (replaces the old empty boxes)
+function addSel(wf, last) {
+  const opts = [];
+  for (let x = new Date(wf); x <= last; x = addDays(x, 1)) {
+    const k = iso(x);
+    if (getS(k)) continue;
+    opts.push(store.rm[k] && SESS[k]
+      ? '<option value="restore:' + k + '">↺ Restore planned: ' + longFmt.format(x) + "</option>"
+      : '<option value="' + k + '">' + longFmt.format(x) + "</option>");
+  }
+  if (!opts.length) return null;
+  const s = document.createElement("select");
+  s.className = "addsel"; s.setAttribute("aria-label", "Add a practice on a free day");
+  s.innerHTML = '<option value="">+ Add practice</option>' + opts.join("");
+  s.onchange = () => {
+    const v = s.value; if (!v) return;
+    if (v.indexOf("restore:") === 0) { delete store.rm[v.slice(8)]; save(); render(); }
+    else addPractice(v);
+  };
+  return s;
+}
+
+function weekBox(mon, wf, last, evMap) {
+  const wrap = document.createElement("div"); wrap.className = "wkbox";
+  const head = weekSummary(mon, wf, last);   // dates, phase, planned km, completed km
+  const sel = addSel(wf, last); if (sel) head.append(sel);
+  wrap.append(head);
+  const grid = document.createElement("div"); grid.className = "wdays";
+  for (let d = new Date(wf); d <= last; d = addDays(d, 1)) if (getS(iso(d))) grid.append(sessCell(d, evMap));
+  if (grid.children.length) wrap.append(grid);
+  else { const p = document.createElement("p"); p.className = "note"; p.textContent = "No session planned this week."; wrap.append(p); }
+  return wrap;
+}
+
+window.renderCalendar = function (evMap) {
+  const viewFrom = weekStart > VIEW ? weekStart : VIEW;
+  const cal = document.getElementById("cal"); cal.innerHTML = "";
+  MONTHS.forEach(([y, m]) => {
+    const ms = new Date(y, m, 1), me = new Date(y, m + 1, 0), weeks = [];
+    for (let mon = mondayOf(ms); mon <= me; mon = addDays(mon, 7)) {
+      const thu = addDays(mon, 3);
+      if (thu.getMonth() !== m || thu.getFullYear() !== y) continue;
+      const wf = mon < viewFrom ? viewFrom : mon, sun = addDays(mon, 6), last = sun < END ? sun : END;
+      if (wf <= last) weeks.push({mon, wf, last});
+    }
+    if (!weeks.length) return;
+    const box = document.createElement("section"); box.className = "slide white";
+    box.innerHTML = "<h2>" + monthFmt.format(ms) + "</h2>";
+    weeks.forEach(w => box.append(weekBox(w.mon, w.wf, w.last, evMap)));
+    cal.append(box);
+  });
+};
+
+window.renderArchive = function (evMap) {
+  const body = document.getElementById("archiveBody"); body.innerHTML = "";
+  const weeks = [];
+  for (let m = mondayOf(VIEW); m < weekStart; m = addDays(m, 7)) weeks.push(m);
+  weeks.reverse();
+  document.getElementById("archiveSum").textContent = "Archived previous weeks (" + weeks.length + ")";
+  if (!weeks.length) { body.innerHTML = '<p class="note">Nothing here yet. Each week moves here once it is over.</p>'; return; }
+  weeks.forEach(mon => {
+    const wf = mon < VIEW ? VIEW : mon, sun = addDays(mon, 6), last = sun < END ? sun : END;
+    body.append(weekBox(mon, wf, last, evMap));
+  });
+};
+
 render();
 })();
