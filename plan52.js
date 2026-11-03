@@ -145,5 +145,141 @@ window.renderArchive = function (evMap) {
   });
 };
 
+// ===== Round 2: archive button, pace fix, Done at top, planned km when completed, new feels =====
+
+// "Archived" button, left of "Today"
+(function () {
+  const goT = document.getElementById("goToday");
+  const b = document.createElement("button");
+  b.type = "button"; b.id = "goArchive"; b.textContent = "Archived";
+  goT.parentNode.insertBefore(b, goT);
+  b.onclick = () => {
+    document.querySelectorAll(".side-tab").forEach(x => x.classList.toggle("active", x.dataset.tab === "training"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "training"));
+    const a = document.getElementById("archive"); a.open = true;
+    a.scrollIntoView({behavior: "smooth", block: "start"});
+  };
+})();
+
+// Duration parsing: accepts 32, 32:00, 1:05:30, 32'30
+window.timeSeconds = function (value) {
+  const x = String(value || "").trim().replace(/['’]/g, ":").replace(/[^0-9:]/g, "");
+  if (!x) return 0;
+  const a = x.split(":").map(Number);
+  if (a.some(Number.isNaN)) return 0;
+  if (a.length === 1) return a[0] * 60;
+  if (a.length === 2) return a[0] * 60 + a[1];
+  return a[0] * 3600 + a[1] * 60 + a[2];
+};
+// Chart labels: the value passed in is seconds per km (was shown as 384:00 instead of 6:24)
+window.formatPaceValue = function (sec) {
+  const t = Math.round(sec);
+  return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+};
+
+// Distance counted for a session: the actual km if logged, else the planned km once it is completed
+function doneKm(k) {
+  const v = num((store.log[k] || {}).km);
+  if (v > 0) return v;
+  if (store.done[k]) { const g = getS(k); return g ? kmInfo(g).v : 0; }
+  return 0;
+}
+window.weekSummary = function (mon, wf, last) {
+  let planned = 0, logged = 0;
+  for (let x = new Date(wf); x <= last; x = addDays(x, 1)) {
+    const k = iso(x), g = getS(k);
+    if (g) planned += kmInfo(g).v;
+    if (store.done[k]) logged += doneKm(k);
+  }
+  const mk = iso(mon), el = document.createElement("div"); el.className = "wk";
+  const wl = document.createElement("span"); wl.className = "wl";
+  wl.textContent = shortFmt.format(wf) + " – " + shortFmt.format(last);
+  const phase = document.createElement("button");
+  phase.type = "button"; phase.className = "week-phase";
+  phase.setAttribute("aria-label", "Change training phase for this week");
+  phase.textContent = weekPhase(mk) || "Set phase";
+  phase.title = "Click to cycle through training phases";
+  phase.onclick = () => {
+    const idx = PHASES.indexOf(weekPhase(mk));
+    store.wt[mk] = PHASES[(idx + 1) % PHASES.length]; save(); render();
+  };
+  el.append(wl, phase);
+  if (planned) { const s = document.createElement("span"); s.textContent = "Planned ≈ " + km1(planned) + " km"; el.append(s); }
+  const s2 = document.createElement("span"); s2.textContent = "Actual completed " + km1(logged) + " km"; el.append(s2);
+  return el;
+};
+
+// Statistics: completed sessions without a logged distance count with their planned km
+window.renderStatistics = function (range) {
+  range = range || "weekly";
+  const today = new Date(iso(new Date()) + "T00:00:00"), cutoff = new Date(today);
+  if (range === "weekly") cutoff.setDate(cutoff.getDate() - 55);
+  else { cutoff.setMonth(cutoff.getMonth() - 11); cutoff.setDate(1); }
+  const keys = new Set(Object.keys(store.log || {}));
+  Object.keys(store.done || {}).forEach(k => { if (store.done[k]) keys.add(k); });
+  const entries = Array.from(keys).filter(k => {
+    const d = new Date(k + "T00:00:00"), L = store.log[k] || {};
+    return d >= cutoff && d <= addDays(today, 1) && (doneKm(k) > 0 || num(L.hr) > 0 || actualPace(k) > 0);
+  }).sort();
+  const dfmt = new Intl.DateTimeFormat("en-GB", {day: "numeric", month: "short"});
+  const labels = entries.map(k => dfmt.format(new Date(k + "T00:00:00")));
+  const mileage = entries.map(k => doneKm(k) > 0 ? doneKm(k) : null);
+  const pace = entries.map(k => { const p = actualPace(k); return p > 0 ? p / 60 : null; });
+  const hr = entries.map(k => num((store.log[k] || {}).hr) > 0 ? num(store.log[k].hr) : null);
+  drawChart("mileageChart", mileage, labels, "km");
+  drawChart("paceChart", pace, labels, "min/km");
+  drawChart("hrChart", hr, labels, "bpm");
+  const sm = document.getElementById("statsSummary");
+  if (sm) {
+    const nk = mileage.filter(v => v > 0).length, np = pace.filter(v => v > 0).length, nh = hr.filter(v => v > 0).length;
+    sm.textContent = nk
+      ? nk + " workout" + (nk === 1 ? "" : "s") + " with distance in this period (planned distance is used when a completed session has no logged distance). Pace available for " + np + ", heart rate for " + nh + "."
+      : "No completed workouts with a distance in this period. Tick Done on a session or log its distance.";
+  }
+};
+
+// Dashboard: weekly completed km uses the same rule; feel observations for the new feels
+const baseDash = renderDashboard;
+window.renderDashboard = function () {
+  baseDash();
+  const monday = mondayOf(new Date(iso(new Date()) + "T00:00:00"));
+  let km = 0; for (let i = 0; i < 7; i++) km += doneKm(iso(addDays(monday, i)));
+  const c = document.querySelectorAll("#dashboardMetrics .metric strong"); if (c[1]) c[1].textContent = km.toFixed(1) + " km";
+  const cnt = {};
+  Object.keys(store.done || {}).forEach(k => {
+    const f = (store.log[k] || {}).feel;
+    if (store.done[k] && (f === "Heavy legs" || f === "Tired" || f === "Hard")) cnt[f] = (cnt[f] || 0) + 1;
+  });
+  const parts = Object.keys(cnt).map(f => cnt[f] + " as " + f.toLowerCase());
+  const ul = document.getElementById("observationList");
+  if (parts.length && ul) {
+    const first0 = ul.querySelector("li");
+    if (first0 && /^Complete and log/.test(first0.textContent)) ul.innerHTML = "";
+    const li = document.createElement("li"); li.textContent = "You marked completed workouts as " + parts.join(", ") + "."; ul.append(li);
+  }
+};
+
+// Feel options: Tired, Hard, Heavy legs (old "Heavy" entries are renamed)
+(function () {
+  const sel = document.querySelector('#dlg [data-l="feel"]');
+  if (sel) sel.innerHTML = '<option value="">-</option><option>Great</option><option>Good</option><option>OK</option><option>Tired</option><option>Hard</option><option>Heavy legs</option>';
+  let changed = false;
+  Object.keys(store.log || {}).forEach(k => { if (store.log[k] && store.log[k].feel === "Heavy") { store.log[k].feel = "Heavy legs"; changed = true; } });
+  if (changed) save();
+})();
+
+// Session dialog: title, Done button and Completed checkbox at the top
+(function () {
+  const dl = document.getElementById("dlg"), t = document.getElementById("dTitle");
+  const top = document.createElement("div"); top.className = "dtop";
+  t.parentNode.insertBefore(top, t); top.append(t);
+  const dn = document.createElement("button"); dn.type = "button"; dn.className = "btn"; dn.textContent = "Done";
+  dn.onclick = () => dl.close(); top.append(dn);
+  const chk = document.getElementById("dDone").closest("label"); top.after(chk);
+  const st = document.createElement("style");
+  st.textContent = "#dlg .dtop{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:-22px -22px 12px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--mist)}#dlg .dtop h3{margin:0}#dlg>.chk{margin:0 0 14px;font-size:1rem;font-weight:600;display:flex;align-items:center;gap:10px}#dDone{width:22px;height:22px;accent-color:#16834a}";
+  document.head.append(st);
+})();
+
 render();
 })();
