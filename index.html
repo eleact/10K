@@ -1512,5 +1512,160 @@ window.renderDashboard = function () {
 render();
 })();
 </script>
+<script>
+ // ===== Round 4: paste at the very end of the main <script> in index.html, just before </script> =====
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+
+// ---- styles: blue-to-purple progress bar, collapsible zones ----
+const st = document.createElement("style");
+st.textContent = `
+.wbar i,.wbar i.full{background:linear-gradient(90deg,#2f54e0,#8b5cf6)}
+.zhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.zhead h2{margin:0}
+.ztoggle{display:flex;align-items:center;gap:8px;font:inherit;font-size:.88rem;color:var(--ink);background:#fff;border:1px solid var(--rule);border-radius:999px;padding:6px 14px;cursor:pointer}
+.ztoggle .arr{display:inline-block;transition:transform .2s}
+.ztoggle[aria-expanded="true"] .arr{transform:rotate(90deg)}`;
+document.head.append(st);
+
+// ---- dates as DD/MM/YYYY ----
+const setFmt = (t, o) => { const f = new Intl.DateTimeFormat("en-GB", o); Object.defineProperty(t, "format", {value: d => f.format(d)}); };
+setFmt(longFmt, {weekday: "long", day: "2-digit", month: "2-digit", year: "numeric"});
+setFmt(shortFmt, {day: "2-digit", month: "2-digit"});
+setFmt(fullFmt, {day: "2-digit", month: "2-digit", year: "numeric"});
+const MON = {Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12};
+const _drawChart = window.drawChart;
+window.drawChart = (id, v, labels, u) => _drawChart(id, v, labels.map(l => {
+  const m = /^(\d+) ([A-Za-z]{3})/.exec(l); return m && MON[m[2]] ? pad(+m[1]) + "/" + pad(MON[m[2]]) : l;
+}), u);
+
+// ---- week of 16/11 is Base ----
+const wk2 = iso(addDays(first, 7));
+PHASE[wk2] = "Base";
+if (store.wt && store.wt[wk2] === "Recovery") delete store.wt[wk2];
+
+// ---- Settings paces also shift the plan's range paces (6:09-6:50/km etc.) ----
+const _planText = planText;
+window.planText = function (g, value) {
+  if (!value || /\d+'\d{2}/.test(String(value))) return _planText(g, value);
+  const key = g.t === "easy" ? "easy" : g.t === "tempo" ? "tempo" : "";
+  if (!key) return value;
+  const P = store.paces || DEFAULT_PACES;
+  const d = (Number(P[key + "Sec"]) || DEFAULT_PACES[key + "Sec"]) - DEFAULT_PACES[key + "Sec"];
+  if (!d) return value;
+  return String(value).replace(/(\d{1,2}):(\d{2})(?=\/km|[–-]\d{1,2}:\d{2}\/km)/g, (m, a, b) => {
+    const t = +a * 60 + +b + d; return Math.floor(t / 60) + ":" + pad(t % 60);
+  });
+};
+
+// ---- Paces: own tab with collapsible zones; the duplicate Paces cards are removed ----
+const al = $("allures"); if (al) al.remove();
+const oz = $("zonesSec"); if (oz) oz.remove();
+window.renderPaceSettings = function () {
+  const p = store.paces || DEFAULT_PACES;
+  $("settingEasy").value = paceLabel(p.easySec ?? 390);
+  $("settingTempo").value = paceLabel(p.tempoSec ?? 300);
+  $("settingTest").value = paceLabel(p.testSec ?? 292);
+  $("settingHr").value = p.hr;
+};
+const tabBtn = document.createElement("button");
+tabBtn.type = "button"; tabBtn.className = "side-tab"; tabBtn.dataset.tab = "pacesPanel"; tabBtn.textContent = "◈ Paces";
+document.querySelector('.side-tab[data-tab="training"]').after(tabBtn);
+const panel = document.createElement("div"); panel.id = "pacesPanel"; panel.className = "tab-panel";
+$("training").after(panel);
+tabBtn.addEventListener("click", () => {
+  document.querySelectorAll(".side-tab").forEach(b => b.classList.toggle("active", b === tabBtn));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p === panel));
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+(function () {
+  const P = w => 270 + 45 * Math.pow(1 - (w - 1) / 51, 1.2);
+  const fp = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + pad(s % 60); };
+  // [name, low, high, key zone, shown when collapsed]
+  const ZONES = [
+    ["Recovery", null, 1.30, 0, 0], ["Easy", 1.17, 1.30, 0, 1], ["LT1 (aerobic threshold)", 1.175, 1.24, 1, 1],
+    ["Steady", 1.11, 1.16, 0, 0], ["Tempo", 1.05, 1.08, 0, 0], ["LT2 (lactate threshold)", 1.01, 1.035, 1, 1],
+    ["10K race pace", 1, 1, 0, 1], ["5K pace", 0.94, 0.97, 0, 0], ["1 km reps", 0.93, 0.95, 0, 0],
+    ["Short reps", 0.86, 0.89, 0, 0], ["Strides", 0.80, 0.85, 0, 0]
+  ];
+  let open = false;
+  const sec = document.createElement("section"); sec.className = "slide pale"; sec.id = "zonesSec";
+  sec.innerHTML = '<div class="zhead"><h2>Pace zones</h2><button type="button" class="ztoggle" id="zoneToggle" aria-expanded="false" aria-controls="zoneGrid"><span class="arr">▸</span><span id="zoneToggleTxt">Show all</span></button></div>' +
+    '<label class="zsel">Zones for <select id="zoneWeek"></select></label><div class="zone-grid" id="zoneGrid"></div><p class="note" id="zoneNote"></p>';
+  panel.append(sec);
+  const cur = Math.max(1, Math.min(52, Math.floor((new Date(todayISO + "T00:00:00") - first) / (7 * DAY)) + 1));
+  const sel = $("zoneWeek");
+  sel.innerHTML = [[cur, "This week (week " + cur + ")"]].concat([1, 13, 26, 40, 52].map(w => [w, "Week " + w + " · " + fullFmt.format(addDays(first, (w - 1) * 7))]))
+    .map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+  function draw() {
+    const p = P(Number(sel.value) || cur);
+    $("zoneGrid").innerHTML = ZONES.filter(z => open || z[4]).map(z => {
+      const lo = z[1], hi = z[2];
+      const pace = lo === null ? "slower than " + fp(hi * p) : lo === hi ? fp(p) : z[3] ? "≈ " + fp((lo + hi) / 2 * p) : fp(lo * p) + "–" + fp(hi * p);
+      const range = z[3] ? '<span class="hr">' + fp(lo * p) + "–" + fp(hi * p) + "/km range</span>" : "";
+      return '<div class="zone' + (z[3] ? " key" : "") + '"><h3>' + z[0] + "</h3><strong>" + pace + "/km</strong>" + range + "</div>";
+    }).join("");
+    $("zoneNote").textContent = "Based on the plan's target 10K pace for that week (" + fp(p) + "/km), so they hold only if you are on track. Estimated from field data, about ±5–8 s/km. Re-test with a 30-minute time trial every 8 weeks or so.";
+  }
+  $("zoneToggle").onclick = e => {
+    open = !open; e.currentTarget.setAttribute("aria-expanded", open);
+    $("zoneToggleTxt").textContent = open ? "Show fewer" : "Show all"; draw();
+  };
+  sel.onchange = draw; draw();
+})();
+
+// ---- test events are goals, not races (and you can switch it per event) ----
+const TEST_IDS = ["e-5k-feb", "e-10k-may", "e-5k-jul", "e-10k-sep"];
+const isGoal = e => e.isGoal !== undefined ? !!e.isGoal : TEST_IDS.indexOf(e.id) > -1;
+const byDate = (a, b) => (a.date || "9999").localeCompare(b.date || "9999");
+window.renderEvents = function () {
+  const box = $("evList"); box.innerHTML = "";
+  const list = getEv().filter(e => !isGoal(e)).sort(byDate);
+  if (!list.length) box.innerHTML = '<p class="note">No race yet. Add your first one below.</p>';
+  const up = list.filter(e => !e.date || e.date >= todayISO), past = list.filter(e => e.date && e.date < todayISO).reverse();
+  up.forEach(e => box.append(evRow(e, false)));
+  if (past.length) { const h = document.createElement("p"); h.className = "evh"; h.textContent = "Past races"; box.append(h); past.forEach(e => box.append(evRow(e, true))); }
+  renderGoals(); countdown();
+};
+window.countdown = function () {
+  const up = getEv().filter(e => !isGoal(e) && e.date && e.date >= todayISO).sort(byDate);
+  const el = $("count"), el2 = $("count2");
+  if (!up.length) { el.textContent = "No upcoming race. Add one in Races."; el2.textContent = ""; return; }
+  const e = up[0], n = daysTo(e.date), name = e.name || "your event";
+  el.textContent = n > 1 ? plural(n) + " to " + name + " · " + longFmt.format(new Date(e.date + "T00:00:00")) : n === 1 ? "Tomorrow: " + name : "Today: " + name + ". Good luck!";
+  el2.textContent = up.slice(1, 3).map(x => { const d = daysTo(x.date); return (x.name || "Event") + " (" + (TYPES[x.type] || "Other") + ") " + (d === 0 ? "today" : d === 1 ? "tomorrow" : "in " + plural(d)); }).join(" · ");
+};
+window.renderGoals = function () {
+  const box = $("goalList"); if (!box) return; box.innerHTML = "";
+  const all = getEv().slice().sort(byDate);
+  if (!all.length) { box.innerHTML = '<p class="note">Add an event to set a goal.</p>'; return; }
+  [["Race goals", all.filter(e => !isGoal(e))], ["Test goals", all.filter(isGoal)]].forEach(([title, list]) => {
+    if (!list.length) return;
+    const h = document.createElement("p"); h.className = "evh"; h.textContent = title; box.append(h);
+    list.forEach(e => {
+      const pace = goalPace(e.goalTime, e.goalKm || (e.type === "run" ? 10 : 0)), g = isGoal(e);
+      const row = document.createElement("button"); row.type = "button"; row.className = "ev" + (e.date && e.date < todayISO ? " past" : "");
+      row.innerHTML = '<span class="evd">' + (e.date ? esc(fullFmt.format(new Date(e.date + "T00:00:00"))) : "No date") + "</span>" +
+        '<span class="evn">' + esc(e.name || "Untitled event") + "<small>Target: " + esc(formatGoalTime(e.goalTime)) + "</small></span>" +
+        '<span class="evtype ty-' + (g ? "trail" : "run") + '">' + (g ? "Test" : "Race") + "</span>" +
+        '<span class="evg">' + (pace ? esc(pace) + "/km" : "Set goal") + "</span>";
+      row.onclick = () => openEv(e.id); box.append(row);
+    });
+  });
+};
+(function () {
+  const row = $("evDlg").querySelector(".row");
+  const lab = document.createElement("label"); lab.className = "chk";
+  lab.innerHTML = '<input type="checkbox" id="evIsGoal"> This is a test goal, not a race';
+  row.before(lab);
+  const cb = $("evIsGoal"), baseOpen = window.openEv;
+  window.openEv = function (id) { baseOpen(id); const e = getEv().find(x => x.id === id); cb.checked = !!(e && isGoal(e)); };
+  cb.onchange = () => { store.ev = getEv().map(x => x.id === evCur ? Object.assign({}, x, {isGoal: cb.checked}) : x); save(); render(); };
+})();
+
+render();
+})();
+</script>
 </body>
 </html>
