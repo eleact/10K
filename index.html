@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10K training</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a2333">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="10K training">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap">
+<style>
+:root{--mist:#dbe4ec;--navy:#1a2333;--ink:#0b1019;--pale:#edf2f6;--rule:#9db1c4;--slate:#536477;--cobalt:#2f54e0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--mist);color:var(--ink);font:400 16px/1.45 Geist,system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
+ repeating-radial-gradient(circle at 88% 12%,transparent 0 150px,rgba(157,177,196,.55) 150px 151px),
+ repeating-radial-gradient(circle at 6% 92%,transparent 0 190px,rgba(157,177,196,.45) 190px 191px)}
+main{padding:0 clamp(14px,2.5vw,40px) 40px 260px;max-width:none;width:100%;min-height:100vh}
+.app-sidebar{position:fixed;z-index:30;left:0;top:0;bottom:0;width:232px;padding:26px 16px;background:var(--navy);color:#fff;display:flex;flex-direction:column;gap:8px;box-shadow:8px 0 30px -24px rgba(0,0,0,.45)}
+.app-sidebar .brand{font-size:1.15rem;font-weight:600;letter-spacing:-.04em;margin:0 8px 26px}
+.app-sidebar button{font:inherit;text-align:left;color:#dbe4ec;background:transparent;border:0;border-radius:10px;padding:12px 14px;cursor:pointer}
+.app-sidebar button:hover,.app-sidebar button.active{background:#34445d;color:#fff}
+.app-sidebar .side-note{margin-top:auto;color:#b9c6d4;font-size:.75rem;padding:8px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px auto;max-width:1600px}
+.metric{background:#fff;border:1px solid var(--mist);border-radius:16px;padding:18px}
+.metric span{display:block;color:var(--slate);font-size:.82rem}.metric strong{display:block;font-size:1.8rem;letter-spacing:-.04em;margin-top:6px;font-weight:500}
+.dashboard-week-plan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;align-items:stretch}.week-plan-day{min-width:0;border:1px solid var(--mist);border-radius:9px;padding:9px 10px;background:#f8fafc;cursor:pointer;text-align:left;color:var(--ink);font:inherit;font-size:.82rem;line-height:1.3;display:flex;flex-direction:column;gap:5px;min-height:90px;transition:border-color .15s}.week-plan-day:hover{border-color:var(--rule)}.week-plan-day .wday{display:flex;justify-content:space-between;align-items:center;gap:5px;font-weight:600;margin-bottom:1px;font-size:.82rem}.week-plan-day .wdetail{color:var(--slate);font-size:.76rem;white-space:normal;overflow-wrap:anywhere}.week-plan-day .wstatus{color:#16834a;font-weight:700;font-size:.95rem;flex-shrink:0}.week-plan-day .wstatus-label{color:#8290a0;font-weight:400;font-size:.7rem}.week-plan-day.t-easy{background:var(--pale)}.week-plan-day.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.week-plan-day.t-long{background:var(--rule)}.week-plan-day.t-tempo{background:#bcd0f7}.week-plan-day.t-test{background:var(--navy);color:#fff}.week-plan-day.t-race{background:var(--cobalt);color:#fff}.week-plan-day.t-test .wdetail,.week-plan-day.t-race .wdetail{color:#e0e7f0}.week-plan-day.is-completed .wday-label,.week-plan-day.is-completed .wdetail{color:#788797}.week-plan-day.is-completed.t-test .wday-label,.week-plan-day.is-completed.t-race .wday-label{color:#d3dbe6}.week-plan-day .wcheck{color:#16834a;font-weight:800;font-size:1.05rem}@media(max-width:900px){.dashboard-week-plan{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.dashboard-week-plan{grid-template-columns:1fr}.week-plan-day{min-height:0;padding:9px 10px}}
+.observations{background:#fff;border:1px solid var(--mist);border-radius:16px;padding:18px;margin:16px auto;max-width:none}.observations h3{margin:0 0 10px;font-weight:500}.observations ul{margin:0;padding-left:20px}.observations li{margin:7px 0}
+.stats-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.chart-card{border:1px solid var(--mist);border-radius:16px;padding:16px;min-width:0}.chart-card h3{margin:0 0 8px;font-weight:500}.chart-card canvas{display:block;width:100%;height:250px}
+.pace-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:900px}.pace-settings label{display:flex;flex-direction:column;gap:6px;color:var(--slate);font-size:.9rem}.pace-settings input{width:100%;padding:11px 12px;border:1px solid var(--rule);border-radius:10px;background:#fff;color:var(--ink);font:inherit}.pace-settings .row,.pace-settings #settingsMessage{grid-column:1/-1}@media(max-width:640px){.pace-settings{grid-template-columns:1fr}}
+.stats-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.stats-controls button{border:1px solid var(--rule);border-radius:999px;background:#fff;padding:7px 14px;font:inherit;cursor:pointer}.stats-controls button.active{background:var(--navy);color:#fff}
+.subtabs{display:flex;gap:8px;margin-bottom:18px}.subtabs button{font:inherit;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:7px 15px;cursor:pointer}.subtabs button.active{background:var(--navy);color:#fff}.goal-pace{font-weight:600;color:var(--cobalt);margin:4px 0 12px}.goal-label{display:inline-block;background:#e8edff;color:#263eb5;border-radius:999px;padding:3px 9px;font-size:.75rem;margin-top:5px}
+.chip.done{opacity:1;box-shadow:inset 0 0 0 2px #16834a}.chip.done .km::before{color:#16834a;font-weight:800}.chip.done .ty::after{content:' ✓';color:#16834a;font-size:.85rem}
+@media(max-width:900px){main{padding:76px 12px 32px}.app-sidebar{right:0;bottom:auto;width:auto;height:62px;padding:7px 8px;flex-direction:row;align-items:center;overflow-x:auto}.app-sidebar .brand{margin:0 8px;white-space:nowrap}.app-sidebar button{white-space:nowrap;padding:9px 12px}.app-sidebar .side-note{display:none}.dashboard-grid{grid-template-columns:1fr}.stats-layout{grid-template-columns:1fr}}
+nav{position:sticky;top:10px;z-index:10;max-width:1100px;margin:10px auto 0;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-radius:999px;box-shadow:0 12px 30px -18px rgba(26,35,51,.5)}
+nav b{font-weight:600;letter-spacing:-.03em;font-size:1.05rem}
+nav .sp{margin-left:auto;display:flex;align-items:center;gap:18px}
+nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
+nav button{font:inherit;font-size:.85rem;color:#fff;background:var(--navy);border:0;border-radius:999px;padding:5px 14px;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.navy a:focus-visible,.navy button:focus-visible{outline-color:#fff}
+.slide{position:relative;max-width:none;width:100%;margin:16px auto;border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(26,35,51,.45)}
+.slide.white{max-width:none}
+.legend{max-width:1600px}
+.slide::before{content:"";position:absolute;inset:12px;pointer-events:none;opacity:.4;background:
+ linear-gradient(currentColor,currentColor) 0 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 100% 0/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 0 100%/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 100%/1px 14px no-repeat,
+ linear-gradient(currentColor,currentColor) 100% 100%/14px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 100%/1px 14px no-repeat}
+.white{background:#fff}.pale{background:var(--pale)}.navy{background:var(--navy);color:#fff}
+h1,h2{font-weight:500;letter-spacing:-.045em;line-height:.95;margin:0}
+h1{font-size:clamp(3rem,10vw,7rem);margin:26px 0 28px}
+h2{font-size:clamp(2rem,5vw,3.3rem);margin-bottom:22px;text-transform:capitalize}
+.hero h1 span{display:block;animation:streak .9s cubic-bezier(.2,.7,.2,1) both}
+.hero h1 span:nth-child(2){margin-left:7%;animation-delay:.12s}
+@keyframes streak{from{opacity:0;transform:translateX(-80px) skewX(-10deg)}}
+.count{margin:0 0 6px;font-size:clamp(1rem,2.4vw,1.35rem);letter-spacing:-.02em;color:#b9c6d4}
+.count.sub{font-size:.95rem;margin:0;opacity:.8}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.cols div{border-left:1px solid var(--rule);padding:4px 22px}
+.cols div:first-child{border-left:0;padding-left:0}
+.cols h3{margin:0;font-weight:500;font-size:.95rem;color:var(--slate)}
+.cols p{margin:6px 0 0;color:var(--slate);font-size:.92rem}
+.cols strong{display:block;font-weight:500;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.04em;margin-top:6px}
+.legend{margin:22px auto 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.legend span{font-size:.78rem;padding:2px 11px;border-radius:999px}
+
+/* Calendar */
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{font-size:.75rem;color:var(--slate);text-align:center;padding-bottom:2px}
+.day{min-height:200px;border:1px solid var(--mist);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:5px}
+.day.empty{border:0}
+.day.today{border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
+.num{font-size:.78rem;color:var(--slate)}
+.dn{display:none}
+.evt{font-size:.68rem;font-weight:600;line-height:1.2;color:var(--cobalt)}
+.chip{flex:1;display:flex;flex-direction:column;gap:9px;font:inherit;font-size:.74rem;line-height:1.3;text-align:left;border:0;border-radius:8px;padding:9px 9px 10px;cursor:pointer;color:var(--ink)}
+.chip>span{display:block}
+.chip>.top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.km{font-weight:600;font-size:1.1rem;letter-spacing:-.03em;line-height:1.1}
+.chip.done .km::before{content:"✓ "}
+.chip.done{opacity:.55}
+.ty{font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;opacity:.7}
+.chip>.blk{display:flex;flex-direction:column;gap:4px;border-top:1px solid rgba(127,127,127,.4);padding-top:6px}
+.lb{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.65}
+.tx{font-weight:500;overflow-wrap:anywhere}
+.pc{opacity:.78;font-size:.72rem;margin-top:3px}
+.t-easy{background:var(--pale)}.t-club{background:#fff;box-shadow:inset 0 0 0 1px var(--navy)}.t-long{background:var(--rule)}
+.t-tempo{background:#bcd0f7}.t-test{background:var(--navy);color:#fff}.t-race{background:var(--cobalt);color:#fff}
+
+/* Weekly row: dates, week type, distances */
+.wk{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:.82rem;color:var(--slate);padding:4px 4px 12px;border-bottom:1px solid var(--mist)}
+.wk .wl{font-weight:500;color:var(--ink)}
+.week-phase{font:inherit;font-size:.8rem;padding:3px 11px;border:1px solid var(--rule);border-radius:999px;background:var(--pale);color:var(--ink);cursor:pointer}.week-phase:hover{background:var(--mist)}details{margin-top:14px;color:var(--slate)}details summary{cursor:pointer;font-weight:600;color:var(--ink)}pre{overflow:auto;white-space:pre-wrap;background:var(--pale);padding:12px;border-radius:10px;font-size:.78rem}
+
+/* Empty day: the whole box is clickable */
+.day.blank{position:relative;cursor:pointer;transition:background .15s}
+.day.blank:hover{background:var(--pale)}
+.add{flex:1;border:0;background:transparent;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit}
+.add::after{content:"";position:absolute;inset:0;border-radius:10px}
+.add:focus-visible{outline:none}
+.add:focus-visible::after{outline:2px solid var(--cobalt);outline-offset:2px}
+.restore{position:relative;z-index:1;align-self:flex-start;font:inherit;font-size:.7rem;color:var(--slate);background:none;border:0;padding:2px;cursor:pointer;text-decoration:underline}
+
+/* Races & events */
+.evlist{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.evh{font-size:.8rem;color:var(--slate);margin:10px 0 0}
+.note{color:var(--slate);margin:0}
+.ev{display:grid;grid-template-columns:8.5rem 1fr auto 6rem;gap:6px 16px;align-items:center;text-align:left;font:inherit;background:#fff;border:1px solid var(--mist);border-radius:14px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.ev:hover{border-color:var(--rule)}
+.ev.past{opacity:.55}
+.evd{font-size:.88rem;color:var(--slate)}
+.evn{font-weight:500;font-size:1.05rem;letter-spacing:-.02em;overflow-wrap:anywhere}
+.evn small{display:block;font-weight:400;font-size:.8rem;color:var(--slate);letter-spacing:0}
+.evtype{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;padding:2px 10px;border-radius:999px;color:#fff}
+.ty-run{background:var(--cobalt)}.ty-trail{background:#2f7d5b}.ty-triathlon{background:#b5532a}.ty-other{background:var(--slate)}
+.evg{font-weight:500;text-align:right}
+
+/* Archive */
+#archive summary{cursor:pointer;font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:500;letter-spacing:-.04em;line-height:1}
+#archiveBody{margin-top:22px}
+.aw{margin-bottom:26px}
+.aw .wk{border-bottom:0;padding-bottom:8px}
+#archive .dn{display:inline}
+
+.wordmark{font-size:clamp(3rem,13vw,9rem);font-weight:500;letter-spacing:-.06em;line-height:.9;white-space:nowrap;overflow:hidden;margin:0 0 22px}
+.foot{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;color:#b9c6d4;font-size:.9rem}
+.btn{font:inherit;font-size:.88rem;padding:8px 16px;border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;cursor:pointer}
+dialog{border:0;border-radius:20px;padding:22px;width:min(520px,94vw);max-height:92vh;overflow:auto;background:#fff;color:var(--ink);font-family:inherit}
+dialog::backdrop{background:rgba(11,16,25,.55)}
+dialog h3{margin:0 0 14px;font-size:1.3rem;font-weight:500;letter-spacing:-.03em;text-transform:capitalize}
+dialog label{display:block;font-size:.8rem;color:var(--slate);margin-bottom:10px}
+dialog input[type=text],dialog input[type=date],dialog select,dialog textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--pale);color:var(--ink)}
+dialog textarea{resize:vertical;line-height:1.45}
+dialog .chk{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:.95rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.part{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+.sec{font-size:.85rem;font-weight:500;margin:8px 0 6px}
+.hint{font-size:.76rem;color:var(--slate);margin:-2px 0 12px}
+.copy{display:flex;align-items:flex-end;gap:10px;margin:4px 0 6px}
+.copy label{flex:1;margin:0}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:8px}
+dialog .btn{color:var(--ink)}
+dialog .danger{color:#b3261e}
+.js .rise{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
+.js .rise.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .rise{opacity:1;transform:none;transition:none}.hero h1 span{animation:none}html{scroll-behavior:auto}}
+
+/* Narrow screens and tablets: one day per row so the full practice stays readable */
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr;gap:8px}
+  .wd,.day.empty{display:none}
+  .day{min-height:0}
+  .dn{display:inline}
+  .day.blank{flex-direction:row;align-items:center;gap:10px;padding:4px 8px}
+  .day.blank .num{min-width:64px}
+  .add{min-height:30px}
+}
+@media (max-width:640px){
+  main{padding:76px 8px 32px}
+  .slide{padding:22px 12px;border-radius:18px}
+  nav{padding:8px 14px;gap:10px}
+  nav .sp{gap:12px}
+  .cols{grid-template-columns:1fr}
+  .cols div{border-left:0;border-top:1px solid var(--rule);padding:14px 0}
+  .cols div:first-child{border-top:0}
+  .two,.part{grid-template-columns:1fr}
+  .ev{grid-template-columns:1fr auto}
+  .ev .evd{grid-column:1/-1}
+  .evg{text-align:left}
+}
+</style>
+</head>
+<body>
+<aside class="app-sidebar" aria-label="Main navigation">
+  <div class="brand">10K training</div>
+  <button type="button" class="side-tab active" data-tab="dashboard">▦ Dashboard</button>
+  <button type="button" class="side-tab" data-tab="training">▤ Training plan</button>
+  <button type="button" class="side-tab" data-tab="racesPanel">◎ Races</button>
+  <button type="button" class="side-tab" data-tab="statistics">↗ Statistics</button>
+  <button type="button" class="side-tab" data-tab="settings">⚙ Settings</button>
+  <div class="side-note">Your training, at a glance.</div>
+</aside>
+<main>
+  <nav>
+    <b>10K training</b>
+    <div class="sp"><button type="button" id="goToday">Today</button></div>
+  </nav>
+
+  <div id="dashboard" class="tab-panel active">
+  <section class="slide navy hero">
+    <h1><span>10K</span><span>training</span></h1>
+    <p class="count" id="count"></p>
+    <p class="count sub" id="count2"></p>
+  </section>
+  <div class="dashboard-grid" id="dashboardMetrics"></div>
+  <section class="slide white" id="dashboardWeek"><h2>Current week training plan</h2><p class="note" id="dashboardWeekRange"></p><div id="dashboardWeekPlan" class="dashboard-week-plan"></div></section>
+  <section class="observations" id="observations"><h3>Training observations</h3><ul id="observationList"><li>Complete and log workouts to see observations based on your data.</li></ul></section>
+  </div>
+
+  <div id="training" class="tab-panel">
+<div class="legend" id="calendrier"></div>
+  <div id="cal"></div>
+
+  <details class="slide white" id="archive">
+    <summary id="archiveSum">Archived previous weeks</summary>
+    <div id="archiveBody"></div>
+  </details>
+  </div>
+
+  <div id="racesPanel" class="tab-panel">
+  <section class="slide pale" id="races">
+    <div class="subtabs"><button type="button" class="race-subtab active" data-race-tab="eventsView">Events</button><button type="button" class="race-subtab" data-race-tab="goalsView">Goals</button></div>
+    <div id="eventsView"><h2>Races</h2><div class="evlist" id="evList"></div><button class="btn" id="evAdd" type="button">Add event</button></div>
+    <div id="goalsView" hidden><h2>Goals</h2><p class="note">Set a target time for each race. Its equivalent average pace is calculated automatically.</p><div id="goalList" class="evlist"></div></div>
+  </section>
+  </div>
+
+  <div id="statistics" class="tab-panel">
+    <section class="slide white"><h2>Statistics</h2><p class="note">Charts use the workouts and measurements you have logged in this browser.</p>
+      <div class="stats-controls"><button type="button" class="active" data-range="weekly">Weekly</button><button type="button" data-range="monthly">Monthly</button></div>
+      <div class="stats-layout"><div class="chart-card"><h3>Mileage (km)</h3><canvas id="mileageChart"></canvas></div><div class="chart-card"><h3>Average pace (min/km)</h3><canvas id="paceChart"></canvas></div><div class="chart-card"><h3>Average heart rate (bpm)</h3><canvas id="hrChart"></canvas></div><div class="chart-card"><h3>Logged sessions</h3><p id="statsSummary" class="note">Log workouts to build your statistics.</p></div></div>
+    </section>
+  </div>
+
+  <div id="settings" class="tab-panel">
+    <section class="slide white"><h2>Settings</h2><p class="note">Set your pace targets in minutes:seconds per kilometre. Pace targets update throughout the training plan.</p>
+      <form id="paceSettingsForm" class="pace-settings">
+        <label>Easy pace (min:sec/km)<input id="settingEasy" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="6:30" required></label>
+        <label>Tempo pace (min:sec/km)<input id="settingTempo" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="5:00" required></label>
+        <label>Test pace (min:sec/km)<input id="settingTest" type="text" inputmode="numeric" pattern="[0-9]{1,2}:[0-5][0-9]" placeholder="4:52" required></label>
+        <label>Easy run heart-rate ceiling (bpm)<input id="settingHr" type="number" min="80" max="220" step="1" required></label>
+        <div class="row"><button class="btn" type="submit">Save pace settings</button><button class="btn" id="resetPaces" type="button">Restore defaults</button></div>
+        <p id="settingsMessage" class="note" aria-live="polite"></p>
+      </form>
+    </section>
+    <section class="slide white"><h2>Cloud sync</h2><p class="note">To sync your plan between computer and phone, connect a free Supabase project. Use the same project and account on both devices. Your pace settings, completed workouts, logs and edits will sync.</p>
+      <form id="syncForm" class="pace-settings">
+        <label>Supabase project URL<input id="syncUrl" type="url" placeholder="https://your-project.supabase.co" required></label>
+        <label>Supabase publishable / anon key<input id="syncKey" type="password" autocomplete="off" placeholder="sb_publishable_… or anon key" required></label>
+        <label>Account email<input id="syncEmail" type="email" autocomplete="username" required></label>
+        <label>Account password<input id="syncPassword" type="password" autocomplete="current-password" minlength="8" required></label>
+        <div class="row"><button class="btn" type="submit">Sign in / sync</button><button class="btn" id="syncSignup" type="button">Create account</button><button class="btn" id="syncLogout" type="button">Disconnect</button></div>
+        <p id="syncMessage" class="note" aria-live="polite"></p>
+      </form>
+      <details><summary>One-time Supabase setup instructions</summary><p>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>, then run the SQL schema from the repository's <code>README.md</code> in the Supabase SQL Editor. Copy the project URL and publishable/anon key from Project Settings → API. Use the same project and account on your computer and phone.</p></details>
+    </section>
+  </div>
+
+  <section class="slide navy rise"><div class="foot"><span>Local changes are saved on this device. Use cloud sync in Settings to share data across devices.</span><button class="btn" id="resetAll" type="button">Reset all</button></div></section>
+</main>
+
+<dialog id="dlg">
+  <h3 id="dTitle"></h3>
+  <div class="two">
+    <label>Type<select id="dT" data-f="t"></select></label>
+    <label>Planned distance (km)<input type="text" id="dK" data-f="km" inputmode="decimal" placeholder="auto"></label>
+  </div>
+  <label>Warm-up<input type="text" data-f="wx" placeholder="e.g. 15' easy"></label>
+  <div class="part">
+    <label>Practice<textarea data-f="mx" rows="3" placeholder="e.g. 3×10' at 5'00/km · rec 3' jog"></textarea></label>
+    <label>Pace<input type="text" data-f="mp" placeholder="e.g. 6'30/km"></label>
+  </div>
+  <p class="hint">Pace is shown for easy runs. Estimated duration is calculated from planned distance and your numerical pace settings.</p>
+  <label>Cool-down<input type="text" data-f="cx" placeholder="e.g. 10' easy"></label>
+  <label>Notes<textarea data-f="n" rows="3"></textarea></label>
+
+  <p class="sec">What you did</p>
+  <div class="three">
+    <label>Actual km<input type="text" data-l="km" inputmode="decimal" placeholder="e.g. 8.2"></label>
+    <label>Duration (HH:MM:SS or MM:SS)<input type="text" data-l="duration" placeholder="e.g. 00:42:30"></label>
+    <label>Avg heart rate<input type="text" data-l="hr" inputmode="numeric" placeholder="bpm"></label>
+  </div>
+  <label>Feel<select data-l="feel"><option value="">-</option><option>Great</option><option>Good</option><option>OK</option><option>Heavy</option></select></label>
+  <label class="chk"><input type="checkbox" id="dDone"> Completed</label>
+
+  <p class="sec">Copy to another day</p>
+  <div class="copy">
+    <label>Date<input type="date" id="dCopyDate"></label>
+    <button class="btn" id="dCopy" type="button">Copy</button>
+  </div>
+  <p class="hint" id="dCopyMsg"></p>
+
+  <div class="row">
+    <button class="btn danger" id="dRemove" type="button">Remove practice</button>
+    <button class="btn" id="dReset" type="button">Reset this day</button>
+    <button class="btn" id="dClose" type="button">Done</button>
+  </div>
+</dialog>
+
+<dialog id="evDlg">
+  <h3>Event</h3>
+  <label>Name<input type="text" data-e="name" placeholder="e.g. Trail des Landes"></label>
+  <div class="two">
+    <label>Date<input type="date" data-e="date"></label>
+    <label>Type<select data-e="type" id="evType"></select></label>
+  </div>
+  <label>Details<textarea data-e="note" rows="3" placeholder="Distance, place, extra details"></textarea></label>
+  <div class="two"><label>Goal time (HH:MM:SS or MM:SS)<input type="text" data-e="goalTime" id="evGoalTime" placeholder="e.g. 00:50:00"></label><label>Goal distance (km)<input type="text" data-e="goalKm" id="evGoalKm" inputmode="decimal" placeholder="e.g. 10"></label></div>
+  <p class="goal-pace" id="evGoalPace">Goal pace: enter a goal time and distance.</p>
+  <div class="row">
+    <button class="btn danger" id="evRemove" type="button">Remove event</button>
+    <button class="btn" id="evDone" type="button">Done</button>
+  </div>
+</dialog>
+
+<script src="plan.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
