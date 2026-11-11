@@ -1279,3 +1279,134 @@ renderGoals = function () {
 
 render();
 })();
+// results.js: past races keep your actual result, linked to the logged (archived) activity.
+// Add this at the very end of app.js, or load it after app.js: <script src="results.js"></script>
+(function () {
+const $r = id => document.getElementById(id);
+
+// ---- 1. Events that match the new plan.js (replaces the old plan's tests and 45:00 race) ----
+const NEW_EVENTS = [
+  {id:"e-10k", name:"10K", date:"2026-11-08", type:"run", note:"", goalTime:"00:50:00", goalKm:"10"},
+  {id:"e-5k-feb", name:"5K test", date:"2027-02-13", type:"run", note:"", goalTime:"00:23:05", goalKm:"5", isGoal:true},
+  {id:"e-10k-mar", name:"10K test", date:"2027-03-13", type:"run", note:"", goalTime:"00:47:30", goalKm:"10", isGoal:true},
+  {id:"e-5k-may", name:"5K test", date:"2027-05-08", type:"run", note:"", goalTime:"00:22:30", goalKm:"5", isGoal:true},
+  {id:"e-10k-jun", name:"10K test", date:"2027-06-05", type:"run", note:"", goalTime:"00:46:00", goalKm:"10", isGoal:true},
+  {id:"e-5k-aug", name:"5K test", date:"2027-08-28", type:"run", note:"", goalTime:"00:22:05", goalKm:"5", isGoal:true},
+  {id:"e-10k-sep", name:"10K test", date:"2027-09-25", type:"run", note:"", goalTime:"00:45:20", goalKm:"10", isGoal:true},
+  {id:"e-10k-final", name:"10K sub-45", date:"2027-11-14", type:"run", note:"", goalTime:"00:44:50", goalKm:"10"}
+];
+const OLD_IDS = ["e-5k-feb", "e-10k-may", "e-5k-jul", "e-10k-sep", "e-10k-45"];
+EVENTS.length = 0; NEW_EVENTS.forEach(e => EVENTS.push(Object.assign({}, e)));
+
+// Events you already saved in the browser or in the cloud still hold the old list: swap it once.
+// Logged results are stored by date, so nothing you logged is lost.
+function migrate() {
+  if (store.evVer === 3) return;
+  if (Array.isArray(store.ev)) {
+    const keep = store.ev.filter(e => e && OLD_IDS.indexOf(e.id) < 0);
+    NEW_EVENTS.forEach(n => { if (!keep.some(k => k.id === n.id)) keep.push(Object.assign({}, n)); });
+    store.ev = keep;
+  }
+  store.evVer = 3; save();
+}
+const baseRender = render;
+render = function () { migrate(); baseRender(); };
+
+// ---- 2. Result helpers (the result IS the logged activity of that day) ----
+const fmtDur = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return (h ? h + ":" + pad(m) : m) + ":" + pad(s % 60); };
+const fmtP = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + pad(s % 60); };
+const isPast = e => !!(e && e.date && e.date <= todayISO);
+const goalKmOf = e => num(e.goalKm) || (e.type === "run" ? 10 : 0);
+function resultOf(e) {
+  if (!isPast(e)) return null;
+  const L = store.log[e.date] || {}, sec = timeSeconds(L.duration || L.time);
+  if (!sec) return null;
+  const km = num(L.km) || goalKmOf(e);
+  return {sec, km, pace: km > 0 ? sec / km : 0};
+}
+function compareText(e, r) {
+  const goal = timeSeconds(e.goalTime), gk = goalKmOf(e);
+  if (!goal || !(gk > 0) || !(r.km > 0)) return "";
+  if (Math.abs(r.km - gk) / gk < 0.03) {
+    const d = r.sec - goal;
+    return d === 0 ? "exactly on the goal" : fmtDur(Math.abs(d)) + (d < 0 ? " faster than" : " slower than") + " the goal";
+  }
+  const d = Math.round(r.pace - goal / gk);
+  return d === 0 ? "on the goal pace" : Math.abs(d) + " s/km " + (d < 0 ? "faster than" : "slower than") + " the goal pace";
+}
+function resultChip(e) {
+  const r = resultOf(e); if (!r) return null;
+  const s = document.createElement("small");
+  s.className = "goal-label"; s.style.cssText = "display:inline-block;margin-right:6px;background:#e3f4ea;color:#16683b";
+  s.textContent = "Result " + fmtDur(r.sec) + (r.pace ? " · " + fmtP(r.pace) + "/km" : "");
+  return s;
+}
+
+// Races list and Goals list show the result next to the goal
+const baseEvRow = evRow;
+evRow = function (e, past) {
+  const b = baseEvRow(e, past), c = resultChip(e), n = b.querySelector(".evn");
+  if (c && n) n.append(c);
+  return b;
+};
+const baseRenderGoals = renderGoals;
+renderGoals = function () {
+  baseRenderGoals();
+  const box = $r("goalList"); if (!box) return;
+  getEv().forEach(e => {
+    if (!resultOf(e)) return;
+    const d = fullFmt.format(new Date(e.date + "T00:00:00"));
+    box.querySelectorAll(".ev").forEach(row => {
+      const evd = row.querySelector(".evd"), evn = row.querySelector(".evn");
+      if (evd && evn && evd.textContent === d && evn.firstChild && evn.firstChild.textContent === (e.name || "Untitled event")) evn.append(resultChip(e));
+    });
+  });
+};
+
+// ---- 3. Result section in the event dialog (past events only) ----
+const row = evDlg.querySelector(".row");
+const box = document.createElement("div"); box.id = "evResult"; box.hidden = true;
+box.innerHTML = '<p class="sec">Result</p>' +
+  '<div class="two"><label>Actual time (HH:MM:SS or MM:SS)<input type="text" id="evResTime" placeholder="e.g. 00:48:42"></label>' +
+  '<label>Actual distance (km)<input type="text" id="evResKm" inputmode="decimal"></label></div>' +
+  '<p class="goal-pace" id="evResPace"></p><p class="hint" id="evResLink"></p>' +
+  '<div class="row" style="margin-top:0"><button class="btn" id="evResOpen" type="button">Open archived activity</button></div>';
+row.before(box);
+
+function syncResult(fill) {
+  const e = getEv().find(x => x.id === evCur);
+  box.hidden = !isPast(e); if (box.hidden) return;
+  const L = store.log[e.date] || {}, r = resultOf(e), g = getS(e.date), c = r && compareText(e, r);
+  if (fill) { $r("evResTime").value = L.duration || L.time || ""; $r("evResKm").value = L.km || ""; }
+  $r("evResKm").placeholder = goalKmOf(e) ? String(goalKmOf(e)) : "";
+  $r("evResPace").textContent = r ? "Actual pace " + (r.pace ? fmtP(r.pace) + "/km" : "n/a") + (c ? " · " + c : "") : "Enter your time to see your pace.";
+  $r("evResLink").textContent = g
+    ? "Linked to the archived activity of " + fullFmt.format(new Date(e.date + "T00:00:00")) + " (" + (LABELS[g.t] || "Workout") + "). Changes here update that day's log, and the other way round."
+    : "No activity on this day yet. Entering a result creates one.";
+  $r("evResOpen").hidden = !g;
+}
+function writeResult(from) {
+  const e = getEv().find(x => x.id === evCur); if (!e || !isPast(e)) return;
+  const t = $r("evResTime").value.trim(), k = $r("evResKm").value.trim();
+  if (!getS(e.date)) {
+    if (!t && !k) return;
+    delete store.rm[e.date];
+    store.o[e.date] = S(e.isGoal || /test/i.test(e.name || "") ? "test" : "race", {mx: e.name || "Race", km: e.goalKm || ""});
+  }
+  const L = Object.assign({}, store.log[e.date]);
+  if (t) L.duration = t; else delete L.duration;
+  if (k) L.km = k; else delete L.km;
+  if (from === "time" && t && !L.km && goalKmOf(e)) { L.km = String(goalKmOf(e)); $r("evResKm").value = L.km; }
+  store.log[e.date] = L;
+  if (t) store.done[e.date] = true;
+  save(); render(); syncResult(false);
+}
+$r("evResTime").addEventListener("input", () => writeResult("time"));
+$r("evResKm").addEventListener("input", () => writeResult("km"));
+$r("evResOpen").onclick = () => { const e = getEv().find(x => x.id === evCur); if (e) { evDlg.close(); openDay(e.date); } };
+evFields.forEach(f => f.addEventListener("input", () => syncResult(true)));
+const baseOpenEv = openEv;
+openEv = function (id) { baseOpenEv(id); syncResult(true); };
+
+render();
+})();
