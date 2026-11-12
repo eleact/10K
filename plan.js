@@ -4,49 +4,72 @@ window.TRAINING_PLAN_DATA = (() => {
   const PHASE_BY_WEEK = ["Recovery", "Recovery", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 1", "Build 2", "Build 2", "Build 2", "Build 2", "Build 2", "Build 2", "Build 2", "Build 2", "Build 2", "Specific", "Specific", "Specific", "Specific", "Specific", "Specific", "Specific", "Peak", "Taper", "Taper"];
   const NEW_PHASES = ["Recovery", "Base", "Build 1", "Build 2", "Specific", "Peak", "Taper"];
   
-  // Progressive tempo pace adjustment for a 45-minute 10K goal.
+  
+  // Progressive threshold pace adjustment for a 45-minute 10K goal.
   // Current 10K PR: 48:43 (4:52/km).
   // Goal: 45:00 (4:30/km).
+  //
+  // These are controlled threshold paces, not 10K race paces.
+  // Distance-based 10K-specific workouts are deliberately preserved.
 
-  const TEMPO_PACES = [
-    { max: 5, pace: "4:58–5:03/km" },
-    { max: 12, pace: "4:55–5:00/km" },
-    { max: 20, pace: "4:53–4:58/km" },
-    { max: 28, pace: "4:50–4:55/km" },
-    { max: 36, pace: "4:47–4:52/km" },
-    { max: 44, pace: "4:44–4:49/km" },
-    { max: Infinity, pace: "4:41–4:46/km" }
-  ];
+  const THRESHOLD_PACES = {
+    "Base": "4:55–5:00/km",
+    "Build 1": "4:52–4:57/km",
+    "Build 2": "4:48–4:53/km",
+    "Specific": "4:45–4:50/km",
+    "Peak": "4:43–4:48/km",
+    "Taper": "4:43–4:48/km"
+  };
 
-  let tempoCount = 0;
+  let eligibleTempoCount = 0;
 
   PLAN.forEach((week, weekIndex) => {
-    const pace = TEMPO_PACES.find(p => weekIndex < p.max).pace;
+    const phase = PHASE_BY_WEEK[weekIndex];
+    const pace = THRESHOLD_PACES[phase];
+
+    if (!pace) return;
 
     week.forEach(([day, workout]) => {
       if (workout.t !== "tempo") return;
 
-      tempoCount++;
+      // Only modify time-based threshold workouts.
+      // Preserve distance-based 10K-specific intervals.
+      const match = workout.mx.match(
+        /(\d+)\s*[×x]\s*(\d+)\s*min/i
+      );
 
-      // Update all existing tempo pace ranges.
+      if (!match) return;
+
+      const reps = Number(match[1]);
+      const minutes = Number(match[2]);
+      const totalThresholdMinutes = reps * minutes;
+
+      eligibleTempoCount++;
+
+      // Update the pace of the existing time-based session.
       workout.mx = workout.mx.replace(
-        /\d:\d{2}–\d:\d{2}\/km/g,
+        /\d:\d{2}[–-]\d:\d{2}\/km/g,
         pace
       );
 
-      // Introduce 4 x 8-minute threshold sessions regularly.
-      // Retain longer specific workouts for 10K preparation.
+      // Introduce 4 x 8-minute sessions during the build.
+      // Only replace sessions with at least 28 minutes of work,
+      // so the overall threshold volume remains progressive.
       const addFourByEight =
-        weekIndex >= 5 &&
-        tempoCount % 3 === 1;
+        weekIndex >= 21 &&
+        weekIndex <= 49 &&
+        totalThresholdMinutes >= 28 &&
+        eligibleTempoCount % 2 === 0;
 
       if (addFourByEight) {
-        workout.km = "9";
-        workout.mx = `4 × 8 min at ${pace} (jog 2 min between reps)`;
-        workout.ds = 57;
+        workout.km = "11";
+        workout.mx =
+          `4 × 8 min at ${pace} (jog 2 min between reps)`;
+        workout.ds = 63;
       }
     });
   });
+
 
   return { PLAN, PHASE_BY_WEEK, NEW_PHASES };
 })();
