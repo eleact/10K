@@ -760,7 +760,7 @@ window.addEventListener('resize',()=>{if(document.getElementById('statistics').c
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
- // plan52.js: 53-week plan for a 10K under 45:00 (Mon 9 Nov 2026 to Sun 14 Nov 2027).
+ // plan52.js: current week + 12-week plan to a 10K on Sat 6 Feb 2027 (Mon 9 Nov 2026 to Sun 7 Feb 2027).
 // Loaded AFTER the main script in index.html. It replaces the old 8-week plan.
 // Each week = list of [day offset from Monday, practice]; edit any practice below.
 (function () {
@@ -781,18 +781,13 @@ dCopyDate.max = iso(END);
 MONTHS.length = 0;
 [[2026,9],[2026,10],[2026,11]].concat(Array.from({length: 11}, (_, i) => [2027, i])).forEach(m => MONTHS.push(m));
 
-// Races and tests of the 53-week plan (goal times calculate the pace in Races > Goals).
-// Tests are flagged isGoal (shown under "Test goals"); log the actual time in each event's Result section.
+// Races of the 12-week plan (goal times calculate the pace in Races > Goals).
+// Log the actual time in each event's Result section.
 EVENTS.length = 0;
 [
   {id:"e-10k", name:"10K", date:"2026-11-08", type:"run", note:"", goalTime:"00:50:00", goalKm:"10"},
-  {id:"e-5k-feb", name:"5K test", date:"2027-02-13", type:"run", note:"", goalTime:"00:23:05", goalKm:"5", isGoal:true},
-  {id:"e-10k-mar", name:"10K test", date:"2027-03-13", type:"run", note:"", goalTime:"00:47:30", goalKm:"10", isGoal:true},
-  {id:"e-5k-may", name:"5K test", date:"2027-05-08", type:"run", note:"", goalTime:"00:22:30", goalKm:"5", isGoal:true},
-  {id:"e-10k-jun", name:"10K test", date:"2027-06-05", type:"run", note:"", goalTime:"00:46:00", goalKm:"10", isGoal:true},
-  {id:"e-5k-aug", name:"5K test", date:"2027-08-28", type:"run", note:"", goalTime:"00:22:05", goalKm:"5", isGoal:true},
-  {id:"e-10k-sep", name:"10K test", date:"2027-09-25", type:"run", note:"", goalTime:"00:45:20", goalKm:"10", isGoal:true},
-  {id:"e-10k-final", name:"10K sub-45", date:"2027-11-14", type:"run", note:"", goalTime:"00:44:50", goalKm:"10"}
+  {id:"e-5k-tt", name:"5K time trial", date:"2026-12-26", type:"run", note:"", goalTime:"00:23:00", goalKm:"5", isGoal:true},
+  {id:"e-10k-feb", name:"10K", date:"2027-02-06", type:"run", note:"", goalTime:"00:46:45", goalKm:"10"}
 ].forEach(e => EVENTS.push(e));
 
 // Use each practice's own planned duration when it has one
@@ -1180,9 +1175,9 @@ const TEST_IDS = ["e-5k-feb", "e-10k-mar", "e-5k-may", "e-10k-jun", "e-5k-aug", 
 const isGoal = e => e.isGoal !== undefined ? !!e.isGoal : TEST_IDS.indexOf(e.id) > -1;
 (function () {
   const planned10kPace = w => {
-    const A = [[0, 291], [17, 285], [29, 276], [41, 274], [52, 269]], x = Math.max(0, Math.min(52, w - 1));
+    const A = [[0, 292], [12, 280]], x = Math.max(0, Math.min(12, w - 1));
     for (let k = 0; k < A.length - 1; k++) if (x <= A[k + 1][0]) return A[k][1] + (A[k + 1][1] - A[k][1]) * (x - A[k][0]) / (A[k + 1][0] - A[k][0]);
-    return 269;
+    return 280;
   };
   const latestTest10kPace = () => {
     const tests = getEv().filter(e => isGoal(e) && e.date && e.date <= todayISO)
@@ -1214,9 +1209,9 @@ const isGoal = e => e.isGoal !== undefined ? !!e.isGoal : TEST_IDS.indexOf(e.id)
   const archive = $("archive");
   const calendar = $("cal");
   if (archive) archive.before(sec); else if (calendar) calendar.after(sec); else panel.append(sec);
-  const cur = Math.max(1, Math.min(53, Math.floor((new Date(todayISO + "T00:00:00") - first) / (7 * DAY)) + 1));
+  const cur = Math.max(1, Math.min(13, Math.floor((new Date(todayISO + "T00:00:00") - first) / (7 * DAY)) + 1));
   const sel = $("zoneWeek");
-  sel.innerHTML = [[cur, "This week (week " + cur + ")"]].concat([1, 14, 27, 40, 53].map(w => [w, "Week " + w + " · " + fullFmt.format(addDays(first, (w - 1) * 7))]))
+  sel.innerHTML = [[cur, "This week (week " + cur + ")"]].concat([1, 4, 7, 10, 13].map(w => [w, "Week " + w + " · " + fullFmt.format(addDays(first, (w - 1) * 7))]))
     .map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
   function draw() {
     const p = latestTest10kPace() || planned10kPace(Number(sel.value) || cur);
@@ -1290,18 +1285,18 @@ render();
 (function () {
 const $r = id => document.getElementById(id);
 const NEW_EVENTS = EVENTS.map(e => Object.assign({}, e));
-const OLD_IDS = ["e-5k-feb", "e-10k-may", "e-5k-jul", "e-10k-sep", "e-10k-45"];
+const OLD_IDS = ["e-5k-feb", "e-10k-may", "e-5k-jul", "e-10k-sep", "e-10k-45", "e-10k-mar", "e-5k-may", "e-10k-jun", "e-5k-aug", "e-10k-final", "e-10k-feb", "e-5k-tt"];
 
 // Events you already saved in the browser or in the cloud still hold the old list: swap it once.
 // Logged results are stored by date, so nothing you logged is lost.
 function migrate() {
-  if (store.evVer === 3) return;
+  if (store.evVer === 6) return;
   if (Array.isArray(store.ev)) {
     const keep = store.ev.filter(e => e && OLD_IDS.indexOf(e.id) < 0);
     NEW_EVENTS.forEach(n => { if (!keep.some(k => k.id === n.id)) keep.push(Object.assign({}, n)); });
     store.ev = keep;
   }
-  store.evVer = 3; save();
+  store.evVer = 6; save();
 }
 const baseRender = render;
 render = function () { migrate(); baseRender(); };
